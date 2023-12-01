@@ -1,8 +1,21 @@
-
-
 class SNAFU:
     def __init__(self, snafu_str):
         self.snafu_str = snafu_str
+        self.positive_part = ""
+        self.negative_part = ""
+        for c in snafu_str:
+            if c == "=":
+                self.negative_part += "2"
+                self.positive_part += "0"
+            elif c == "-":
+                self.negative_part += "1"
+                self.positive_part += "0"
+            else:
+                self.negative_part += "0"
+                self.positive_part += c
+
+        print(self.snafu_str, self.positive_part, self.negative_part)
+
         self.snafu_list = [i for i in self.snafu_str]
         self.snafu_list.reverse()
         self.snafu_list_digits = []
@@ -59,8 +72,9 @@ decimal_total = 0
 with open("input.txt", "r") as f:
     for line in f:
         snafu = SNAFU(line.rstrip())
-        print(total.decimal,"+", snafu.decimal, "=", total.decimal + snafu.decimal, "(decimal)", (total + snafu).decimal, "(snafu)")
+
         total += SNAFU(line.rstrip())
         print(total)
 
+SNAFU("0-") + SNAFU
         
