@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def read_file(filename):
     valves = ["AA"]
     flow_rates = [0]
@@ -36,80 +39,84 @@ def read_file(filename):
             travel_cost[i][j] = cost
             travel_cost[j][i] = cost
 
-
     return valves, flow_rates, travel_cost
 
 
-def pressure_released(order, flow_rates, travel_cost, total_minutes=30):
+def pressure_released_for_one_path(path, flow_rates, travel_cost, minutes=30):
     elapsed_minutes = 0
     pressure = 0
     valves_opened = 0
     total_flow_rate_of_open_valves = 0
 
-    for i in range(len(order) - 1):
-        at = order[i]
-        to = order[i + 1]
+    for i in range(len(path) - 1):
+        at = path[i]
+        to = path[i + 1]
         new_minutes = travel_cost[at][to]
-        if elapsed_minutes + new_minutes < total_minutes:
+        if elapsed_minutes + new_minutes < minutes:
             # There is time to go there and get benefit from opening this new valve
             elapsed_minutes += new_minutes
             valves_opened += 1
-            total_flow_rate_of_open_valves += flow_rates[order[i + 1]]
+            total_flow_rate_of_open_valves += flow_rates[path[i + 1]]
             for j in range(i + 1):
-                pressure += new_minutes*flow_rates[order[j]]
+                pressure += new_minutes*flow_rates[path[j]]
 
         else:
             # There is no time to go there, we can therefore only let time run out
-            remaining_minutes = total_minutes - elapsed_minutes
+            remaining_minutes = minutes - elapsed_minutes
             elapsed_minutes += remaining_minutes
             for j in range(i):
-                pressure += remaining_minutes*flow_rates[order[j]]
+                pressure += remaining_minutes*flow_rates[path[j]]
 
             return pressure, False
         
-    pressure += (total_minutes - elapsed_minutes)*total_flow_rate_of_open_valves
+    pressure += (minutes - elapsed_minutes)*total_flow_rate_of_open_valves
 
     return pressure, True
 
 
-if __name__ == "__main__":
-    valves, flow_rates, travel_cost = read_file("input.txt")
+def generate_all_unique_paths_and_get_total_pressure_released(
+    valves, flow_rates, travel_cost, minutes=26
+):
     N = len(valves)
-    combinations = [[0]]
+    paths = [[0]]
     pressures = [0]
 
-    for comb in combinations:
-        valves_left = [i for i in range(1, N) if i not in comb]
+    for path in paths:
+        valves_left = [i for i in range(1, N) if i not in path]
         if len(valves_left) == 0:
             break
         else:
             for idx in valves_left:
-                new_combo = comb + [idx]
-                pressure, used_all_valves = pressure_released(new_combo, flow_rates, travel_cost, total_minutes=26)
+                new_path = path + [idx]
+                pressure, used_all_valves = pressure_released_for_one_path(new_path, flow_rates, travel_cost, minutes=minutes)
                 if used_all_valves:
-                    combinations.append(new_combo)
+                    paths.append(new_path)
                     pressures.append(pressure)
 
-    print(max(pressures))
+    return paths, pressures
+    
 
-    import numpy as np
+if __name__ == "__main__":
+    valves, flow_rates, travel_cost = read_file("input.txt")
 
-    pressures = np.array(pressures)
+    # Part 1, find most pressure released by one worker
+    paths, pressures = generate_all_unique_paths_and_get_total_pressure_released(valves, flow_rates, travel_cost, minutes=30)
+    max_pressure_human = max(pressures)
+    print(f"Part 1: {max_pressure_human}") # 1659
+
+    # Part 2, find most pressure released by two workers
+    paths, pressures = generate_all_unique_paths_and_get_total_pressure_released(valves, flow_rates, travel_cost, minutes=26)
+    # pressures = np.array(pressures)
     idx = np.argsort(pressures)[::-1]
+    max_pressure_human_and_elephant = 0
 
-    comb_pressure = []
-
-    top_N = 1000
+    top_N = 200
     for i in range(top_N):
         for j in range(i, top_N):
-            human = combinations[idx[i]]
-            elephant = combinations[idx[j]]
-            unique = True
-            for valve in human[1:]:
-                if valve in elephant[1:]:
-                    unique = False
-                    break
-            if unique:
-                comb_pressure.append(pressures[idx[i]] + pressures[idx[j]])
+            if not any(valve in paths[idx[i]][1:] for valve in paths[idx[j]][1:]):
+                max_pressure_human_and_elephant = max(
+                    max_pressure_human_and_elephant,
+                    pressures[idx[i]] + pressures[idx[j]]
+                )
             
-    print(max(comb_pressure))
+    print(f"Part 2: {max_pressure_human_and_elephant}") # 2382
