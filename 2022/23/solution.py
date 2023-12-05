@@ -108,5 +108,6 @@ if __name__ == "__main__":
             print(f"Part 1, {counter}")
 
         if performed_moves == 0:
+            print_grid(grid)
             print(f"Part 2, {i+1}")
             break
