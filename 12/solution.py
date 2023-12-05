@@ -14,6 +14,7 @@ def get_elevation(letter):
 def find_shortest_path(grid, start, end_letter, ascend=True):
     # Find the shortest path
     paths = [[start]]
+    shortest_path = []
     end_reached = False
 
     # Perform all possible moves (while limiting versions with same or more steps to any location)
@@ -46,7 +47,7 @@ def find_shortest_path(grid, start, end_letter, ascend=True):
                 # Check if End is reached
                 elif grid[di][dj] == end_letter:
                     end_reached = True
-                    new_paths.append(path + [[di, dj]])
+                    shortest_path = path + [[di, dj]]
                     break
 
                 # Add as a potential path
@@ -63,8 +64,27 @@ def find_shortest_path(grid, start, end_letter, ascend=True):
 
         paths = new_paths
 
-    shortest_path = min(paths, key=len)
-    return len(shortest_path) - 1
+    return shortest_path
+
+
+def plot_path(height, width, path):
+    grid = [["." for _ in range(width)] for _ in range(height)]
+    ei, ej = path[-1]
+    grid[ei][ej] = "E"
+    for s in range(len(path) - 1):
+        si, sj = path[s]
+        di, dj = path[s + 1]
+        if di == si + 1:
+            grid[si][sj] = "v"
+        elif di == si - 1:
+            grid[si][sj] = "^"
+        elif dj == sj + 1:
+            grid[si][sj] = ">"
+        elif dj == sj - 1:
+            grid[si][sj] = "<"
+
+    for row in grid:
+        print("".join(row))
 
 
 if __name__ == "__main__":
@@ -85,9 +105,13 @@ if __name__ == "__main__":
 
     # Find shortest ascend from 'S' to 'E'
     shortest_path = find_shortest_path(grid, start, end_letter="E", ascend=True)
-    print(f"Shortest path from 'S' to 'E': {shortest_path}")
+    print(f"Shortest path from 'S' to 'E': {len(shortest_path) - 1}")
+    print("Path:")
+    plot_path(height, width, shortest_path)
 
     # Find shortest path from any 'a' to 'E'
     # Analogous to finding shortes descend from 'E' to 'a'
     shortest_path = find_shortest_path(grid, end, end_letter="a", ascend=False)
-    print(f"Shortest path from 'E' to any 'a': {shortest_path}")
+    print(f"Shortest hike from any 'a' to 'E': {len(shortest_path) - 1}")
+    print("Path:")
+    plot_path(height, width, shortest_path[::-1])
