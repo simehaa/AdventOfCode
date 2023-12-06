@@ -52,9 +52,12 @@ if __name__ == "__main__":
     print(min([get_location(seed, map_ranges) for seed in seeds])) # 993500720
 
     # Part 2
+    import datetime
+    start_time = datetime.datetime.now()
     for location in range(5_000_000):
         seed = get_seed(location)
         for start, stop in zip(seeds[::2], seeds[1::2]):
             if seed >= start and seed < start+stop:
-                print(location) # 4917124
+                print(seed, location) # 4917124
+                print(datetime.datetime.now()-start_time)
                 exit()
