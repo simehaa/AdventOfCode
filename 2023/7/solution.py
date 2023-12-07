@@ -10,9 +10,9 @@ class Hand:
         self.bid = int(bid)
         self.joker = joker
 
-    def get_type(self, joker=False):
+    def get_type(self):
         unique_cards = list(set(self.cards))
-        if not joker or "J" not in unique_cards:
+        if not self.joker or "J" not in unique_cards:
             if len(unique_cards) == 1:
                 return "five of a kind"
             elif len(unique_cards) == 2:
@@ -30,7 +30,6 @@ class Hand:
             else:
                 return "high card"
         else:
-            unique_cards = list(set(self.cards))
             if len(unique_cards) <= 2:
                 return "five of a kind"
             elif len(unique_cards) == 3:
@@ -54,7 +53,7 @@ class Hand:
             "full house", 
             "four of a kind", 
             "five of a kind", 
-        ].index(self.get_type(self.joker))
+        ].index(self.get_type())
     
     def get_card_rank(self, card):
         if self.joker:
