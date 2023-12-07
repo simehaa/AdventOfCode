@@ -12,7 +12,7 @@ class Hand:
 
     def get_type(self, joker=False):
         unique_cards = list(set(self.cards))
-        if not joker:
+        if not joker or "J" not in unique_cards:
             if len(unique_cards) == 1:
                 return "five of a kind"
             elif len(unique_cards) == 2:
@@ -29,8 +29,6 @@ class Hand:
                 return "one pair"
             else:
                 return "high card"
-        elif "J" not in unique_cards:
-            return self.get_type(joker=False)
         else:
             unique_cards = list(set(self.cards))
             if len(unique_cards) <= 2:
@@ -87,12 +85,9 @@ def solve(lines, part=1):
     for line in lines:
         hand, bid = line.split()
         hands.append(Hand(hand, bid, joker=joker))
-
     total_winnings = 0
     for i, hand in enumerate(sorted(hands)):
-        rank = i + 1
-        total_winnings += hand.bid * rank
-
+        total_winnings += hand.bid * (i + 1)
     return total_winnings
 
 
