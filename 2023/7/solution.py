@@ -10,9 +10,9 @@ class Hand:
         self.bid = int(bid)
         self.joker = joker
 
-    def get_type(self):
-        if not self.joker:
-            unique_cards = list(set(self.cards))
+    def get_type(self, joker=False):
+        unique_cards = list(set(self.cards))
+        if not joker:
             if len(unique_cards) == 1:
                 return "five of a kind"
             elif len(unique_cards) == 2:
@@ -29,6 +29,23 @@ class Hand:
                 return "one pair"
             else:
                 return "high card"
+        elif "J" not in unique_cards:
+            return self.get_type(joker=False)
+        else:
+            unique_cards = list(set(self.cards))
+            if len(unique_cards) <= 2:
+                return "five of a kind"
+            elif len(unique_cards) == 3:
+                if self.cards.count("J") in [2, 3]:
+                    return "four of a kind"
+                elif self.cards.count(unique_cards[0]) == 3 or self.cards.count(unique_cards[1]) == 3 or self.cards.count(unique_cards[2]) == 3:
+                    return "four of a kind"
+                else:
+                    return "full house"
+            elif len(unique_cards) == 4:
+                return "three of a kind"
+            else:
+                return "one pair"
             
     def get_type_rank(self):
         return [
@@ -39,7 +56,7 @@ class Hand:
             "full house", 
             "four of a kind", 
             "five of a kind", 
-        ].index(self.get_type())
+        ].index(self.get_type(self.joker))
     
     def get_card_rank(self, card):
         if self.joker:
@@ -65,20 +82,18 @@ class Hand:
 
 
 def solve(lines, part=1):
-    if part == 1:
-        hands = []
-        for line in lines:
-            hand, bid = line.split()
-            hands.append(Hand(hand, bid, joker=False))
+    joker = False if part == 1 else True
+    hands = []
+    for line in lines:
+        hand, bid = line.split()
+        hands.append(Hand(hand, bid, joker=joker))
 
-        total_winnings = 0
-        for i, hand in enumerate(sorted(hands)):
-            rank = i + 1
-            total_winnings += hand.bid * rank
+    total_winnings = 0
+    for i, hand in enumerate(sorted(hands)):
+        rank = i + 1
+        total_winnings += hand.bid * rank
 
-        return total_winnings
-    elif part == 2:
-        return 0
+    return total_winnings
 
 
 def test_solve(part=1, test_solution=-1):
@@ -93,13 +108,4 @@ def test_solve(part=1, test_solution=-1):
 
 if __name__ == "__main__":
     test_solve(part=1, test_solution=6440)
-    #test_solve(part=2, test_solution=-1)
-
-# 250297448 too low
-
-
-# 32T3K 765 1
-# KTJJT 220 2
-# KK677 28 3
-# T55J5 684 4
-# QQQJA 483 5
+    test_solve(part=2, test_solution=5905)
