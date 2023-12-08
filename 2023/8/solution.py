@@ -1,5 +1,6 @@
 from math import lcm
 
+
 def readfile(filename):
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -59,7 +60,7 @@ def solve(lines, part=1):
 
 
 if __name__ == "__main__":
-    print(solve(readfile("test.txt"), part=1))
-    print(solve(readfile("input.txt"), part=1))
-    print(solve(readfile("part2.txt"), part=2))
-    print(solve(readfile("input.txt"), part=2))
+    print(f"Part 1 test: {solve(readfile('part1.txt'), part=1)}")
+    print(f"Part 1: {solve(readfile('input.txt'), part=1)}")
+    print(f"Part 2 test: {solve(readfile('part2.txt'), part=2)}")
+    print(f"Part 2: {solve(readfile('input.txt'), part=2)}")
