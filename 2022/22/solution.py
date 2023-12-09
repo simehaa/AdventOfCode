@@ -4,7 +4,7 @@ import numpy as np
 class SurfaceWalker:
     def __init__(self,
         grid,
-        initial_cardinal_direction="E",
+        actions,
         initial_coordinates=(0,50),
         boundary_condition="torus",
         side_length=50,
@@ -13,146 +13,139 @@ class SurfaceWalker:
         caridnal_direction: 'E', 'S', 'W', or 'N', initial direction
         boundary_condition: 'torus' or 'cube'
         """
-        self.grid = grid
+        self.actions = actions
+        self.grid = []
+        for row in grid:
+            self.grid.append([c for c in row])
+        y, x = initial_coordinates
+        self.grid[y][x] = "\033[38;2;255;100;100mX\033[0m"
         self.len_y = len(grid)
         self.len_x = len(grid[0])
-        self.cardinal_direction = initial_cardinal_direction
         self.boundary_condition = boundary_condition
-        self.y, self.x = initial_coordinates
+        self.coordinates = np.array(initial_coordinates)
+        self.facing = 0
+        # Tables below should be indexed with self.facing%4
         self.cardinal_table = ["E", "S", "W", "N"]
         self.delta_table = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         self.facing_table = [0, 1, 2, 3]
         self.symbol_table = [">", "v", "<", "^"]
-        self.N = side_length
-        self.side = np.zeros((self.N*4, self.N*3))
-        self.side[0*self.N:1*self.N, 1*self.N:2*self.N] = 1
-        self.side[0*self.N:1*self.N, 2*self.N:3*self.N] = 2
-        self.side[1*self.N:2*self.N, 1*self.N:2*self.N] = 3
-        self.side[2*self.N:3*self.N, 0*self.N:1*self.N] = 4
-        self.side[2*self.N:3*self.N, 1*self.N:2*self.N] = 5
-        self.side[3*self.N:4*self.N, 0*self.N:1*self.N] = 6
-        
-    def symbol(self):
-        return self.symbol_table[self.cardinal_table.index(self.cardinal_direction)]
-    
-    def delta(self):
-        return self.delta_table[self.cardinal_table.index(self.cardinal_direction)]
-    
-    def facing(self):
-        return self.facing_table[self.cardinal_table.index(self.cardinal_direction)]
-    
-    def rotate(self, rotations=1, direction="R"):
-        """
-        direction: "R" or "L"
-        ticks: no. of rotation steps in direction
-        """
-        ticks = rotations if direction == "R" else -rotations
-        i = self.cardinal_table.index(self.cardinal_direction)
-        i = (i + ticks) % len(self.cardinal_table)
-        self.cardinal_direction = self.cardinal_table[i]
-    
+        # self.side stores the face at each coordinate
+        N = side_length
+        self.N = N
+        self.side = np.zeros((N*4, N*3))
+        self.side[0*N:1*N, 1*N:2*N] = 1
+        self.side[0*N:1*N, 2*N:3*N] = 2
+        self.side[1*N:2*N, 1*N:2*N] = 3
+        self.side[2*N:3*N, 0*N:1*N] = 4
+        self.side[2*N:3*N, 1*N:2*N] = 5
+        self.side[3*N:4*N, 0*N:1*N] = 6
+        self.color_counter = 0
+        self.red = 0
+        self.green = 0
+        self.blue = 0
+
     def get_passwd(self):
-        passwd = 1000*(self.y+1) + 4*(self.x+1) + self.facing()
+        y, x = self.coordinates
+        passwd = 1000*(y+1) + 4*(x+1) + self.facing
         return passwd
-    
-    def torus(self, steps):
-        # dy and dx will stay constant because we will not
-        # rotate during walking these steps in one direction
-        dy, dx = self.delta()
-        for j in range(steps):
-            # Get new indices
-            new_y = (self.y + dy) % self.len_y
-            new_x = (self.x + dx) % self.len_x
-            # If " " then we are outside the surface
-            # and can keep walking until we wrap around to
-            # the other side (while keeping direction and rotation)
-            while grid[new_y][new_x] == " ":
-                new_y = (new_y + dy) % self.len_y
-                new_x = (new_x + dx) % self.len_x
-            # If we hit "#" then stop without updating indices
-            if grid[new_y][new_x] == "#":
-                break
-            # As long as the next location is "." we can update indices
-            elif grid[new_y][new_x] == ".":
-                self.y, self.x = new_y, new_x
 
-    def cube(self, steps):
-        """
-        .  1  2
-        .  3  .
-        4  5  .
-        6  .  .
-        """
-        for j in range(steps):
-            dy, dx = self.delta()
-            # Get new indices
-            new_y = (self.y + dy) % self.len_y
-            new_x = (self.x + dx) % self.len_x
-            # Compare current 
-            current_side = self.side[self.y, self.x]
-            new_side = self.side[new_y, new_x]
-            if current_side != new_side:
-                side_x = self.x % self.N
-                side_y = self.y % self.N
-                if current_side == 1 and self.cardinal_direction == "N":
-                    # Go to side 6 from west
-                    new_y = 3*self.N + side_x
-                    new_x = 0*self.N
-                    new_rotations = 1
-                elif current_side == 1 and self.cardinal_direction == "W":
-                    # Go to side 4 from west
-                    new_y = 2*self.N + (self.N - side_y)
-                    new_x = 0*self.N
-                    new_rotations = 2
-                elif current_side == 2 and self.cardinal_direction == "N":
-                    # Go to side 6 from south
-                    new_y = 3*self.N + side_y
-                    new_x = 0*self.N + side_x
-                    new_rotations = 0
-                elif current_side == 2 and self.cardinal_direction == "E":
-                    pass
-                elif current_side == 2 and self.cardinal_direction == "S":
-                    pass
-                elif current_side == 3 and self.cardinal_direction == "E":
-                    pass
-                elif current_side == 3 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 4 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 4 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 5 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 5 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 6 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 6 and self.cardinal_direction == "W":
-                    pass
-                elif current_side == 6 and self.cardinal_direction == "W":
-                    pass
-                else:
-                    raise NotImplementedError(
-                        f"Going from "
-                    )
-    
-            # Can walk one step as normal
-            if grid[new_y][new_x] == "#":
-                break
-            elif grid[new_y][new_x] == ".":
-                self.y, self.x = new_y, new_x
+    def color_character(self, char):
+        cycle = 6*128
+        if self.color_counter % cycle < 128:
+            self.red += 1
+        elif self.color_counter % cycle < 2*128:
+            self.red -= 1
+        elif self.color_counter % cycle < 3*128:
+            self.green += 1
+        elif self.color_counter % cycle < 4*128:
+            self.green -= 1
+        elif self.color_counter % cycle < 5*128:
+            self.blue += 1
+        elif self.color_counter % cycle < 6*128:
+            self.blue -= 1
+        self.color_counter += 1
+        return f"\033[38;2;{128+self.red};{128+self.green};{128+self.blue}m{char}\033[0m"
 
-    
-    def walk(self, actions):
-        for action in actions:
+    def solve(self):
+        for action in self.actions:
             if isinstance(action, int):
-                if self.boundary_condition == "torus":
-                    self.torus(action)
-                elif self.boundary_condition == "cube":
-                    self.cube(action)
+                for _ in range(action):
+                    dy, dx = self.delta_table[self.facing]
+                    y, x = self.coordinates
+                    ny = (y + dy) % self.len_y
+                    nx = (x + dx) % self.len_x
 
-            elif isinstance(action, str):
-                self.rotate(direction=action)
+                    if self.boundary_condition == "torus":
+                        while self.grid[ny][nx] == " ":
+                            ny = (ny + dy) % self.len_y
+                            nx = (nx + dx) % self.len_x
+                        if self.grid[ny][nx] == "#":
+                            break
+                        elif self.grid[ny][nx] == ".":
+                            self.coordinates = ny, nx
+                    else:
+                        """
+                        .  1  2
+                        .  3  .
+                        4  5  .
+                        6  .  .
+                        """
+                        if self.side[y, x] == self.side[ny, nx]:
+                            if self.grid[ny][nx] == "#":
+                                break
+                            else:
+                                self.coordinates = ny, nx
+                                self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
+                        else:
+                            N = self.N
+                            sy = y % N
+                            sx = x % N
+                            if self.side[y, x] == 1:
+                                ny = [sy, N, 3*N-sy-1, 3*N+sx][self.facing]
+                                nx = [2*N, N+sx, 0, 0][self.facing]
+                                new_facing = [0, 1, 0, 0][self.facing]
+                            elif self.side[y, x] == 2:
+                                ny = [3*N-sy-1, N+sx, sy, 4*N-1][self.facing]
+                                nx = [2*N-1, 2*N-1, 2*N-1, sx][self.facing]
+                                new_facing = [2, 2, 2, 3][self.facing]
+                            elif self.side[y, x] == 3:
+                                ny = [N-1, 2*N, 2*N, N-1][self.facing]
+                                nx = [2*N+sy, N+sx, sy, N+sx][self.facing]
+                                new_facing = [3, 1, 1, 3][self.facing]
+                            elif self.side[y, x] == 4:
+                                ny = [2*N+sy, 3*N, N-sy-1, N+sx][self.facing]
+                                nx = [N, sx, N, N][self.facing]
+                                new_facing = [0, 1, 0, 0][self.facing]
+                            elif self.side[y, x] == 5:
+                                ny = [N-sy-1, 3*N+sx, 2*N+sy, 2*N-1][self.facing]
+                                nx = [3*N-1, N-1, N-1, N+sx][self.facing]
+                                new_facing = [2, 2, 2, 3][self.facing]
+                            elif self.side[y, x] == 6:
+                                ny = [3*N-1, 0, 0, 3*N-1][self.facing]
+                                nx = [N+sy, 2*N+sx, N+sy, sx][self.facing]
+                                new_facing = [3, 1, 1, 3][self.facing]
+                            else:
+                                raise ValueError(f"Invalid side {self.side[y, x]}")
+                            if self.grid[ny][nx] == "#":
+                                break
+                            else:
+                                self.coordinates = ny, nx
+                                self.facing = new_facing
+                                self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
+
+            elif action == "R":
+                self.facing = (self.facing + 1) % 4
+            elif action == "L":
+                self.facing = (self.facing - 1) % 4
+            else:
+                raise ValueError("Invalid action")
+        
+    def print_grid(self):
+        for row in self.grid:
+            for c in row:
+                print(c, end="")
+            print()
+
 
 def read_file(filename="input.txt"):
     grid = []
@@ -177,12 +170,15 @@ def read_file(filename="input.txt"):
             num += c
     if num:
         actions.append(int(num))
-
     return grid, actions
 
 
 if __name__ == "__main__":
     grid, actions = read_file()
-    SW = SurfaceWalker(grid, initial_coordinates=(0, 50), boundary_condition="torus")
-    SW.walk(actions)
-    print(SW.get_passwd())
+    Torus = SurfaceWalker(grid, actions, boundary_condition="torus")
+    Torus.solve()
+    Cube = SurfaceWalker(grid, actions, boundary_condition="cube")
+    Cube.solve()
+    Cube.print_grid()
+    print("Part 1:", Torus.get_passwd())
+    print("Part 2:", Cube.get_passwd())
