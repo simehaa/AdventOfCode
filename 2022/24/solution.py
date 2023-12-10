@@ -58,17 +58,13 @@ class Blizzard:
         return string[:-1]
     
     def simulate(self, start, goal):
-        reached_end = False
         paths = [[start]]
-        shortest_path = []
-        H = self.height-2
-        W = self.width-2
+        reached_end = False
         while not reached_end:
-            print(f"\rnumber of paths: {len(paths)}", end="")
-            self.north_blizzards = [((y-1-1)%H+1, x) for y, x in self.north_blizzards]
-            self.south_blizzards = [((y+1-1)%H+1, x) for y, x in self.south_blizzards]
-            self.east_blizzards = [(y, (x+1-1)%W+1) for y, x in self.east_blizzards]
-            self.west_blizzards = [(y, (x-1-1)%W+1) for y, x in self.west_blizzards]
+            self.north_blizzards = [((y-1-1)%(self.height-2)+1, x) for y, x in self.north_blizzards]
+            self.south_blizzards = [((y+1-1)%(self.height-2)+1, x) for y, x in self.south_blizzards]
+            self.east_blizzards = [(y, (x+1-1)%(self.width-2)+1) for y, x in self.east_blizzards]
+            self.west_blizzards = [(y, (x-1-1)%(self.width-2)+1) for y, x in self.west_blizzards]
             new_paths = []
             for path in paths.copy():
                 y, x = path[-1]
@@ -99,14 +95,13 @@ class Blizzard:
                         if not equivalent_path:
                             new_paths.append(path + [(yn, xn)])
             paths = new_paths
-        
-        print()
-        return len(shortest_path)-1
+        return len(shortest_path[1:])
 
 if __name__ == "__main__":
-    B = Blizzard("input.txt")
-    first_trip = B.simulate(start=B.start, goal=B.end)
-    print("Part 1:", first_trip)
-    return_for_snacks = B.simulate(start=B.end, goal=B.start)
-    last_trip = B.simulate(start=B.start, goal=B.end)
-    print("Part 2:", first_trip + return_for_snacks + last_trip)
+    for fn in ["test.txt", "input.txt"]:
+        B = Blizzard(fn)
+        first_trip = B.simulate(start=B.start, goal=B.end)
+        print("Part 1:", first_trip)
+        return_for_snacks = B.simulate(start=B.end, goal=B.start)
+        last_trip = B.simulate(start=B.start, goal=B.end)
+        print("Part 2:", first_trip + return_for_snacks + last_trip)
