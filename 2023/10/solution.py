@@ -70,81 +70,51 @@ def solve(grid):
             elif grid[y][x] == "S":
                 raise ValueError("Returned to start")
             
-    unique_path = []
-    for path in paths[0] + paths[1]:
+    unique_path = paths[0]
+    for path in paths[1][::-1]:
         if path not in unique_path:
             unique_path.append(path)
         
-    return max(len(paths[0]), len(paths[1])) - 1, unique_path
+    return unique_path 
 
 
-def color_character(self, char):
-        cycle = 6*128
-        if self.color_counter % cycle < 128:
-            self.red += 1
-        elif self.color_counter % cycle < 2*128:
-            self.red -= 1
-        elif self.color_counter % cycle < 3*128:
-            self.green += 1
-        elif self.color_counter % cycle < 4*128:
-            self.green -= 1
-        elif self.color_counter % cycle < 5*128:
-            self.blue += 1
-        elif self.color_counter % cycle < 6*128:
-            self.blue -= 1
-        self.color_counter += 1
-        return f"\033[38;2;{128+self.red};{128+self.green};{128+self.blue}m{char}\033[0m"
-
-
-def print_loop(grid, path, outside):
-    new_grid = []
-    for row in grid:
-        new_grid.append([c for c in row])
-    counter = 0
-    length = 128
-    cycle = 6*128
-    red = 128
-    green = 128
-    blue = 128
-    for y, x in path:
-        if counter % cycle < length:
-            red += 1
-        elif counter % cycle < 2*length:
-            red -= 1
-        elif counter % cycle < 3*length:
-            green += 1
-        elif counter % cycle < 4*length:
-            green -= 1
-        elif counter % cycle < 5*length:
-            blue += 1
-        elif counter % cycle < 6*length:
-            blue -= 1
-        counter += 1
-        new_grid[y][x] = f"\033[38;2;{red};{green};{blue}m{grid[y][x]}\033[0m"
-    for y, x in outside:
-        new_grid[y][x] = f"\033[38;2;256;256;256m0\033[0m"
-    for row in grid:
-        for elem in row:
-            print(elem, end="")    
-
-
-def number_of_elements_enclosed_by_loop(grid, path):
-    # Start by padding the grid
+def number_of_elements_enclosed_by_loop(grid, path, print_expanded_grid=False):
     height = len(grid)
     width = len(grid[0])
-    pad_width = width + 2
-    pad_height = height + 2
-    new_grid = [["."]*pad_width]
-    for row in grid:
-        new_grid.append(["."] + [c for c in row] + ["."])
-    new_grid.append(["."]*pad_width)
-    new_path = []
-    for y, x in path:
-        new_path.append((y+1, x+1))
+    # Double up the grid and pad it on low indices (high indices not needed)
+    # All odd coordinates are "real"
+    # All even coordinates are "ghost"
+    # First: we extend the loop by filling "|"" or "-" at ghost coordinates
+    # Then: we do an extended searh on the outside of the loop
+    #   this area is referred to as "air"
+    #   we are allowed to search on ghost coordinates to
+    #   get inside the loop using allowed mechanics
+    new_grid = [["."]*(2*width+1) for _ in range(2*height+1)]
+    for y, row in enumerate(grid):
+        for x, c in enumerate(row):
+            new_grid[2*y+1][2*x+1] = c
 
+    # First, we extend the loop to ghost coordinates
+    new_path = []
+    for i in range(len(path)):
+        y1, x1 = path[i%len(path)]
+        y2, x2 = path[(i+1)%len(path)]
+        yn = 2*y1+1
+        xn = 2*x1+1
+        new_path.append((yn, xn))
+        if x2 != x1:
+            xn += x2 - x1
+            new_path.append((yn, xn))
+            new_grid[yn][xn] = "-"
+        if y2 != y1:
+            yn += y2 - y1
+            new_path.append((yn, xn))
+            new_grid[yn][xn] = "|"
+    
+    # Second, perform the extended search
     air = [(0, 0)]
-    new_grid[0][0] = "0"
-    loop_touching_coordinates = []
+    zeros = 0
+    ones = 0
     for y, x in air:
         neighbors = [
             (y+1,x), # down
@@ -153,29 +123,34 @@ def number_of_elements_enclosed_by_loop(grid, path):
             (y,x-1), # left
         ]
         for yn, xn in neighbors:
-            if xn < 0 or xn >= pad_width or yn < 0 or yn >= pad_height or (yn, xn) in air:
+            if xn < 0 or xn >= 2*width + 1 or yn < 0 or yn >= 2*height + 1 or (yn, xn) in air:
                 continue
             elif (yn, xn) not in air and (yn, xn) not in new_path:
                 air.append((yn, xn))
-                new_grid[yn][xn] = "0"
-            if (yn, xn) in new_path and (y, x) not in loop_touching_coordinates:
-                loop_touching_coordinates.append((y, x))
-    
-    for y, x in loop_touching_coordinates:
-        new_grid[y][x] = "#"
+                if yn % 2 == 1 and xn % 2 == 1:
+                    new_grid[yn][xn] = "0"
+                    zeros += 1
 
-    for y in range(pad_height):
-        for x in range(pad_width):
-            if (y, x) not in new_path and (y, x) not in air:
-                new_grid[y][x] = "I"
+    # Fill in the possible places for "1" (real coordinates inside the loop)
+    for y in range(2*height):
+        for x in range(2*width):
+            if y % 2==1 and x % 2==1 and new_grid[y][x] != "0" and (y, x) not in new_path:
+                new_grid[y][x] = "1"
+                ones += 1
 
-    for row in new_grid:
-        print("".join(row))
+    if print_expanded_grid:
+        for row in new_grid:
+            print("".join(row))
     
-    return pad_width*pad_height - len(path) - len(air)
+    return ones
 
 if __name__ == "__main__":
     grid = readfile("test.txt")
-    max_length, path = solve(grid)
-    print("Part 1:", max_length)
-    print("Part 2:", number_of_elements_enclosed_by_loop(grid, path))
+    path = solve(grid)
+    print("Part 1 (test):", int(len(path)/2))
+    print("Part 2 (test):", number_of_elements_enclosed_by_loop(grid, path, print_expanded_grid=True))
+
+    grid = readfile("input.txt")
+    path = solve(grid)
+    print("Part 1:", int(len(path)/2))
+    print("Part 2:", number_of_elements_enclosed_by_loop(grid, path, print_expanded_grid=False))
