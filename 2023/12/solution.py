@@ -9,7 +9,7 @@ def readfile(filename, part=1):
             if part == 1:
                 springs.append(spring + ".")
                 groups.append(group)
-            else:
+            elif part == 2:
                 springs.append(((spring+"?")*5)[:-1] + ".")
                 groups.append(group*5) 
     return springs, groups
