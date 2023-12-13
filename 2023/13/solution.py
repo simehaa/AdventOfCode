@@ -108,12 +108,11 @@ if __name__ == "__main__":
     for i, mirror in enumerate(mirrors):
         row = find_row_with_smudge(mirror)
         column = find_column_with_smudge(mirror)
-        if isinstance(row, int) and isinstance(column, int):
-            print(i, "Both row and column is int")
-        elif isinstance(row, int):
+        if isinstance(row, int):
             total_sum += 100*row
-        elif isinstance(column, int):
+        if isinstance(column, int):
             total_sum += column
     print("Part 2:", total_sum)
 
 # 34382 too low
+# 66819 too high
