@@ -95,24 +95,28 @@ def find_column_with_smudge(mirror):
 if __name__ == "__main__":
     mirrors = readfile("input.txt")
     total_sum = 0
-    for i, mirror in enumerate(mirrors):
-        row = find_row(mirror)
-        column = find_column(mirror)
-        if isinstance(row, int):
-            total_sum += 100*row
-        elif isinstance(column, int):
-            total_sum += column
-    print("Part 1:", total_sum)
+    # for i, mirror in enumerate(mirrors):
+    #     row = find_row(mirror)
+    #     column = find_column(mirror)
+    #     if isinstance(row, int):
+    #         total_sum += 100*row
+    #     elif isinstance(column, int):
+    #         total_sum += column
+    # print("Part 1:", total_sum)
 
-    total_sums = []
+    total_sum = 0
     for i, mirror in enumerate(mirrors):
         row = find_row_with_smudge(mirror)
         column = find_column_with_smudge(mirror)
-        if isinstance(row, int):
+        print(i)
+        if not isinstance(row, bool):
+            print(row, "is int")
             total_sum += 100*row
-        if isinstance(column, int):
+        if not isinstance(column, bool):
+            print(column, "is int")
             total_sum += column
     print("Part 2:", total_sum)
 
 # 34382 too low
+# 34419 not right
 # 66819 too high
