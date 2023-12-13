@@ -14,109 +14,45 @@ def readfile(filename):
     return mirrors
 
 
-def find_row(mirror, smudge=False):
+def find_row(mirror, smudges=0):
     height = len(mirror)
     for i in range(1, height):
         length = min(i, height-i)
-        reflection = True
+        number_of_smudges_needed = 0
         for j in range(length):
             if mirror[i-j-1] != mirror[i+j]:
-                reflection = False
-                break
-        if reflection:
+                for left, right in zip(mirror[i-j-1], mirror[i+j]):
+                    if left != right:
+                        number_of_smudges_needed += 1
+                continue
+        if number_of_smudges_needed == smudges:
             return i
-    return False
+    return 0
 
 
-def find_column(mirror):
+def find_column(mirror, smudges=0):
     height = len(mirror)
     width = len(mirror[0])
     for i in range(1, width):
         length = min(i, width-i)
-        reflection = True
+        number_of_smudges_needed = 0
         for j in range(length):
             left = [mirror[x][i-j-1] for x in range(height)]
             right = [mirror[x][i+j] for x in range(height)]
             if left != right:
-                reflection = False
-                break
-        if reflection:
-            return i
-    return False
-
-
-def find_row_with_smudge(mirror):
-    height = len(mirror)
-    for i in range(1, height):
-        length = min(i, height-i)
-        number_of_smudges_needed = 0
-        for j in range(length):
-            if mirror[i-j-1] == mirror[i+j]:
-                continue
-            elif number_of_smudges_needed == 0:
-                number_of_unequal_characters = 0
-                for left, right in zip(mirror[i-j-1], mirror[i+j]):
-                    if left != right:
-                        number_of_unequal_characters += 1
-                if number_of_unequal_characters == 1:
-                    number_of_smudges_needed += 1
-                    continue
-            break
-        if number_of_smudges_needed == 1:
-            return i
-    return False
-
-
-def find_column_with_smudge(mirror):
-    height = len(mirror)
-    width = len(mirror[0])
-    for i in range(1, width):
-        length = min(i, width-i)
-        number_of_smudges_needed = 0
-        for j in range(length):
-            left = [mirror[x][i-j-1] for x in range(height)]
-            right = [mirror[x][i+j] for x in range(height)]
-            if left == right:
-                continue
-            elif number_of_smudges_needed == 0:
-                number_of_unequal_characters = 0
                 for l, r in zip(left, right):
                     if l != r:
-                        number_of_unequal_characters += 1
-                if number_of_unequal_characters == 1:
-                    number_of_smudges_needed += 1
-                    continue
-            break
-        if number_of_smudges_needed == 1:
+                        number_of_smudges_needed += 1
+                continue
+        if number_of_smudges_needed == smudges:
             return i
-    return False
+    return 0
 
 
 if __name__ == "__main__":
-    mirrors = readfile("input.txt")
-    total_sum = 0
-    # for i, mirror in enumerate(mirrors):
-    #     row = find_row(mirror)
-    #     column = find_column(mirror)
-    #     if isinstance(row, int):
-    #         total_sum += 100*row
-    #     elif isinstance(column, int):
-    #         total_sum += column
-    # print("Part 1:", total_sum)
-
-    total_sum = 0
-    for i, mirror in enumerate(mirrors):
-        row = find_row_with_smudge(mirror)
-        column = find_column_with_smudge(mirror)
-        print(i)
-        if not isinstance(row, bool):
-            print(row, "is int")
-            total_sum += 100*row
-        if not isinstance(column, bool):
-            print(column, "is int")
-            total_sum += column
-    print("Part 2:", total_sum)
-
-# 34382 too low
-# 34419 not right
-# 66819 too high
+    for part in [1, 2]:
+        total_sum = 0
+        for mirror in readfile("input.txt"):
+            total_sum += 100*find_row(mirror, smudges=part-1)
+            total_sum += find_column(mirror, smudges=part-1)
+        print(f"Part {part}:", total_sum)
