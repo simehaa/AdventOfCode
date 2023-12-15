@@ -1,6 +1,6 @@
 grid = []
 
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     for line in f:
         row = []
         for c in line:
@@ -26,7 +26,7 @@ for i in range(height):
             if grid[i][j] > north or grid[i][j] > south or grid[i][j] > east or grid[i][j] > west:
                 visible += 1
 
-print(f"Number of visible trees from outside the grid: {visible}")
+print(f"Part 1: {visible}")
 
 
 max_score = 0
@@ -87,9 +87,4 @@ if best_views_nsew[3] == best_position[1]:
     reasons[3] = f"all the way to the edge of the forest"
 
 
-print(f"The best scenic score: {max_score}")
-print(f"At position {best_position} is a tree of height {grid[best_position[0]][best_position[1]]}")
-print(f"To the north, we can see {best_views_nsew[0]} trees {reasons[0]}")
-print(f"To the south, we can see {best_views_nsew[1]} trees {reasons[1]}")
-print(f"To the east, we can see {best_views_nsew[2]} trees {reasons[2]}")
-print(f"To the west, we can see {best_views_nsew[3]} trees {reasons[3]}")
+print(f"Part 2: {max_score}")

@@ -1,13 +1,3 @@
-# Read movements
-directions = []
-steps = []
-with open("input.txt", "r") as f:
-    for line in f:
-        d, s = line.split()
-        directions.append(d)
-        steps.append(int(s))
-        
-
 def sign(x):
     """Handy sign function, return sign of a number (-1, 0, 1)"""
     if x > 0:
@@ -104,8 +94,15 @@ def move_rope(directions, steps, rope_length, height, width, start_x, start_y):
     return positions_touched
 
 
-for r in [2, 10]:
-    print(
-        "Number of positions touched by tail: "
-        f"{move_rope(directions, steps, r, 500, 500, 250, 250)}, rope length: {r} knots"
-    )
+if __name__ == "__main__":
+    for r, part in zip([2, 10], [1, 2]):
+        directions = []
+        steps = []
+        with open(f"test{part}.txt", "r") as f:
+            for line in f:
+                d, s = line.split()
+                directions.append(d)
+                steps.append(int(s))
+        
+        positions_touched = move_rope(directions, steps, r, 500, 500, 250, 250)
+        print(f"Part {part}:", positions_touched)

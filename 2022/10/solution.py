@@ -17,7 +17,7 @@ def update_X(X, instruction):
 
 def read_input():
     instructions = []
-    with open("input.txt", "r") as f:
+    with open("test.txt", "r") as f:
         for line in f:
             instructions.append(line.split())
     return instructions
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             if (cycle - 20) % 40 == 0:
                 signals.append(X[0]*cycle)
 
-    print(f"Sum of signals: {sum(signals)}")
-    print(" CRT ".center(40, "-"))
+    print(f"Part 1: {sum(signals)}")
+    print("Part 2:")
     for i in range(0, len(CRT), 40):
         print(CRT[i:i+40])
