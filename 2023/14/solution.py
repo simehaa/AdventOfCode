@@ -64,12 +64,13 @@ class ParabolicReflector:
                 repeated_loads.append(loads[-1])
         print()
         repeat_after = len(repeated_signatures)
+        print(repeat_after)
         remaining = (1_000_000_000 - warm_up - 1) % repeat_after
         return repeated_loads[remaining]
 
 
 if __name__ == "__main__":
-    PR = ParabolicReflector("input.txt")
+    PR = ParabolicReflector("test.txt")
     PR.tilt_in_one_direction(direction=(-1, 0))
     print("Part 1:", PR.load_on_north_beam())
     print("Part 2:", PR.find_load_after_billion_tilt_cycles())

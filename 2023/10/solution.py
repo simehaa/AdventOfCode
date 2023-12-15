@@ -8,17 +8,17 @@ def readfile(filename):
 
 
 def find_loop(grid):
-    start_position = (-1, -1)
+    start_position = ()
     height = len(grid)
     width = len(grid[0])
-    broken = False
     for i, row in enumerate(grid):
         for j, char in enumerate(row):
             if char == "S":
                 start_position = (i, j)
                 break
-        if broken:
-            break
+        else:
+            continue
+        break
 
     y, x = start_position
     paths = [[(y, x)], [(y, x)]]
@@ -148,7 +148,7 @@ def enclosed_by_loop(grid, loop, print_expanded_grid=False):
     return ones
 
 if __name__ == "__main__":
-    grid = readfile("input.txt")
+    grid = readfile("test.txt")
     loop = find_loop(grid)
     print("Part 1:", len(loop)//2)
     print("Part 2:", enclosed_by_loop(grid, loop, print_expanded_grid=False))

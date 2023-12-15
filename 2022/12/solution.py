@@ -21,8 +21,6 @@ def find_shortest_path(grid, start, end_letter, ascend=True):
     while not end_reached:
         new_paths = []
         for path in paths:
-            if end_reached:
-                break
             for direction in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 si = path[-1][0]
                 sj = path[-1][1]
@@ -53,14 +51,14 @@ def find_shortest_path(grid, start, end_letter, ascend=True):
                 # Add as a potential path
                 else:
                     # Check if this location is already reached by (1) a previous path or (2) one of the new paths
-                    another_path_found = False
                     for other_path in paths + new_paths:
                         if [di, dj] in other_path:
-                            another_path_found = True
                             break
-                    
-                    if not another_path_found:
+                    else:
                         new_paths.append(path + [[di, dj]])
+            else:
+                continue    
+            break
 
         paths = new_paths
 
@@ -89,7 +87,7 @@ def plot_path(height, width, path):
 
 if __name__ == "__main__":
     # Read input
-    with open("input.txt") as f:
+    with open("test.txt") as f:
         grid = [[char for char in line if char != "\n"] for line in f]
 
     height = len(grid)
@@ -105,13 +103,9 @@ if __name__ == "__main__":
 
     # Find shortest ascend from 'S' to 'E'
     shortest_path = find_shortest_path(grid, start, end_letter="E", ascend=True)
-    print(f"Shortest path from 'S' to 'E': {len(shortest_path) - 1}")
-    print("Path:")
-    plot_path(height, width, shortest_path)
+    print("Part 1:", len(shortest_path) - 1)
 
     # Find shortest path from any 'a' to 'E'
     # Analogous to finding shortes descend from 'E' to 'a'
     shortest_path = find_shortest_path(grid, end, end_letter="a", ascend=False)
-    print(f"Shortest hike from any 'a' to 'E': {len(shortest_path) - 1}")
-    print("Path:")
-    plot_path(height, width, shortest_path[::-1])
+    print("Part 2:", len(shortest_path) - 1)

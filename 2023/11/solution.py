@@ -11,12 +11,10 @@ def readfile(filename):
     height = len(grid)
     width = len(grid[0])
     for x in range(width):
-        galaxies = False
         for y in range(height):
             if grid[y][x] == "#":
-                galaxies = True
                 break
-        if not galaxies:
+        else:
             columns_without_galaxies.append(x)
     return grid, rows_without_galaxies, columns_without_galaxies
 
@@ -45,8 +43,5 @@ def solve(filename, replace=2):
 
 
 if __name__ == "__main__":
-    print("Part 1 (test):", solve("test.txt"))
-    print("Part 1:", solve("input.txt"))
-    print("Part 2 (test):",solve("test.txt", replace=100))
-    print("Part 2:", solve("input.txt", replace=1_000_000))
-
+    print("Part 1:", solve("test.txt"))
+    print("Part 2:", solve("test.txt", replace=100))

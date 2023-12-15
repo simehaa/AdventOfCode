@@ -87,21 +87,18 @@ class Blizzard:
                         and yn > 0 and yn < self.height-1 
                         and xn > 0 and xn < self.width-1
                     ) or (yn, xn) == start:
-                        equivalent_path = False
                         for other_path in new_paths:
                             if (yn, xn) == other_path[-1]:
-                                equivalent_path = True
                                 break
-                        if not equivalent_path:
+                        else:
                             new_paths.append(path + [(yn, xn)])
             paths = new_paths
         return len(shortest_path[1:])
 
 if __name__ == "__main__":
-    for fn in ["test.txt", "input.txt"]:
-        B = Blizzard(fn)
-        first_trip = B.simulate(start=B.start, goal=B.end)
-        print("Part 1:", first_trip)
-        return_for_snacks = B.simulate(start=B.end, goal=B.start)
-        last_trip = B.simulate(start=B.start, goal=B.end)
-        print("Part 2:", first_trip + return_for_snacks + last_trip)
+    B = Blizzard("test.txt")
+    first_trip = B.simulate(start=B.start, goal=B.end)
+    print("Part 1:", first_trip)
+    return_for_snacks = B.simulate(start=B.end, goal=B.start)
+    last_trip = B.simulate(start=B.start, goal=B.end)
+    print("Part 2:", first_trip + return_for_snacks + last_trip)

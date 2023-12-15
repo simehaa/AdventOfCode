@@ -28,7 +28,7 @@ def print_grid(grid):
 
 
 if __name__ == "__main__":
-    grid = get_grid("input.txt", pad=100)
+    grid = get_grid("test.txt", pad=100)
 
     NW = (-1,-1)
     N = (-1,0)
@@ -56,13 +56,10 @@ if __name__ == "__main__":
         # Loop through elves
         for elf_x, elf_y in elves:
             
-            neighbors = False
             for dx, dy in all_directions:
                 if grid[elf_x+dx][elf_y+dy] == "#":
-                    neighbors = True
                     break
-            
-            if not neighbors:
+            else:
                 continue
 
             for cornel, direct, corner in ordered_moves:
@@ -105,9 +102,8 @@ if __name__ == "__main__":
                     counter += 1
 
         if i == 10 - 1:
-            print(f"Part 1, {counter}")
+            print(f"Part 1: {counter}")
 
         if performed_moves == 0:
-            print_grid(grid)
-            print(f"Part 2, {i+1}")
+            print(f"Part 2: {i+1}")
             break
