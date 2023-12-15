@@ -2,7 +2,7 @@ import re
 
 
 directories = {}
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     path = []
     for line in f:
         cd_down = re.findall(r"\$ cd ([A-Za-z/]+)", line)
@@ -39,5 +39,5 @@ for key, value in directories.items():
     if 70000000 - directories["/"] + value >= 30000000:
         candidates.append(value)
 
-print(f"Sum of dirs with at most 100000: {at_most_100000_sum}")
-print(f"Smallest dir to achieve goal: {min(candidates)}")
+print(f"Part 1: {at_most_100000_sum}")
+print(f"Part 2: {min(candidates)}")

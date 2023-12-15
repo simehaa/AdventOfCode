@@ -1,7 +1,7 @@
 crate_lines = []
 instruction_lines = []
 
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     # Read initial crate configuration
     crate_line_active = True
     for line in f:
@@ -53,12 +53,7 @@ for line in instruction_lines:
 
 
 # Part 1 solution (top crate from each position)
-for position in storage1.keys():
-    print(storage1[position][-1], end="")
-print()
-
+print("Part 1:", "".join([storage1[p][-1] for p in storage1.keys()]))
 
 # Part 2 solution (top crate from each position)
-for position in storage2.keys():
-    print(storage2[position][-1], end="")
-print()
+print("Part 2:", "".join([storage2[p][-1] for p in storage2.keys()]))

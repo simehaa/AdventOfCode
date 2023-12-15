@@ -1,7 +1,7 @@
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     signal = f.readline()
-    for j in [4, 14]:
+    for j, part in zip([4, 14], [1, 2]):
         for i in range(j, len(signal)):
             if len(set(signal[i-j:i])) == j:
-                print(f"start-of-packet marker ({j}): {i}")
+                print(f"Part {part}: {i}")
                 break

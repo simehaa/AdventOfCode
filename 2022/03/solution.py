@@ -3,7 +3,7 @@ priority = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Part 1
 score1 = 0
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     for i, line in enumerate(f):
         half_length = (len(line) - 1) // 2 # remove newline, int division
         compartment1 = line[:half_length]
@@ -15,12 +15,12 @@ with open("input.txt", "r") as f:
                 score1 += priority.index(l)
                 break
 
-print("Part 1 total score:", score1)
+print("Part 1:", score1)
 
 
 # Part 2
 score2 = 0
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     all_elves = f.readlines()
     for i in range(0, len(all_elves), 3):
         elf1 = all_elves[i]
@@ -33,4 +33,4 @@ with open("input.txt", "r") as f:
                 score2 += priority.index(l)
                 break
 
-print("Part 2 total score:", score2)
+print("Part 2:", score2)
