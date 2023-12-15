@@ -1,15 +1,15 @@
 elf_calories = []
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     elf = 0
     for line in f:
-        if line == "\n":
+        if line.rstrip():
+            elf += int(line)
+        else:
             elf_calories.append(elf)
             elf = 0
-        else:
-            elf += int(line)
 
 # Part 1 - top 1 most hungry elf
-print(max(elf_calories))
+print("Part 1:", max(elf_calories))
 
 # Part 2 - sum of top 3 most hungry elves
-print(sum(sorted(elf_calories, reverse=True)[:3]))
+print("Part 2:", sum(sorted(elf_calories, reverse=True)[:3]))
