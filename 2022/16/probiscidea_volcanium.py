@@ -42,7 +42,7 @@ def read_file(filename):
     return valves, flow_rates, travel_cost
 
 
-def pressure_released_for_one_path(path, flow_rates, travel_cost, minutes=30):
+def pressure_one_path(path, flow_rates, travel_cost, minutes=30):
     elapsed_minutes = 0
     pressure = 0
     valves_opened = 0
@@ -74,7 +74,7 @@ def pressure_released_for_one_path(path, flow_rates, travel_cost, minutes=30):
     return pressure, True
 
 
-def generate_all_unique_paths_and_get_total_pressure_released(
+def total_pressure_released(
     valves, flow_rates, travel_cost, minutes=26
 ):
     N = len(valves)
@@ -88,7 +88,12 @@ def generate_all_unique_paths_and_get_total_pressure_released(
         else:
             for idx in valves_left:
                 new_path = path + [idx]
-                pressure, used_all_valves = pressure_released_for_one_path(new_path, flow_rates, travel_cost, minutes=minutes)
+                pressure, used_all_valves = pressure_one_path(
+                    new_path,
+                    flow_rates,
+                    travel_cost,
+                    minutes=minutes
+                )
                 if used_all_valves:
                     paths.append(new_path)
                     pressures.append(pressure)
@@ -97,26 +102,35 @@ def generate_all_unique_paths_and_get_total_pressure_released(
     
 
 if __name__ == "__main__":
-    valves, flow_rates, travel_cost = read_file("input.txt")
+    valves, flow_rates, travel_cost = read_file("test.txt")
 
     # Part 1, find most pressure released by one worker
-    paths, pressures = generate_all_unique_paths_and_get_total_pressure_released(valves, flow_rates, travel_cost, minutes=30)
+    paths, pressures = total_pressure_released(
+        valves,
+        flow_rates,
+        travel_cost,
+        minutes=30,
+    )
     max_pressure_human = max(pressures)
-    print(f"Part 1: {max_pressure_human}") # 1659
+    print("Part 1:", max_pressure_human)
 
     # Part 2, find most pressure released by two workers
-    paths, pressures = generate_all_unique_paths_and_get_total_pressure_released(valves, flow_rates, travel_cost, minutes=26)
+    paths, pressures = total_pressure_released(
+        valves,
+        flow_rates,
+        travel_cost,
+        minutes=26,
+    )
     # pressures = np.array(pressures)
     idx = np.argsort(pressures)[::-1]
     max_pressure_human_and_elephant = 0
-
-    top_N = 200
+    top_N = len(paths) # for input, limit to ~200
     for i in range(top_N):
         for j in range(i, top_N):
-            if not any(valve in paths[idx[i]][1:] for valve in paths[idx[j]][1:]):
+            if all(valve not in paths[idx[i]][1:] for valve in paths[idx[j]][1:]):
                 max_pressure_human_and_elephant = max(
                     max_pressure_human_and_elephant,
                     pressures[idx[i]] + pressures[idx[j]]
                 )
-            
-    print(f"Part 2: {max_pressure_human_and_elephant}") # 2382
+
+    print("Part 2:", max_pressure_human_and_elephant)
