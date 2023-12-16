@@ -9,4 +9,4 @@ year.mkdir(parents=True, exist_ok=True)
 for i in range(1, 26):
     day_path = year / f"{i:02d}"
     day_path.mkdir(parents=True, exist_ok=True)
-    (day_path / "test.txt").open("w", encoding="utf-8")
+    (day_path / "test.txt").touch(exist_ok=True)
