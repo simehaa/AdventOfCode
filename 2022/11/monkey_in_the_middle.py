@@ -1,6 +1,6 @@
-def read_input():
+def read_input(filename):
     monkeys = {}
-    with open("input.txt", "r") as f:
+    with open(filename, "r") as f:
         lines = f.readlines()
         for i, line in enumerate(lines):
             words = line.split()
@@ -18,13 +18,10 @@ def read_input():
                 monkeys[monkey]["if_true"] = int(words[-1])
             elif n == 5:
                 monkeys[monkey]["if_false"] = int(words[-1])
-
     return monkeys
 
 
-def shenanigans(rounds=1, integer_divide_by=3, verbose=False):
-    monkeys = read_input()
-
+def shenanigans(monkeys, rounds=1, integer_divide_by=3, verbose=False):
     # A worry_level can always be reduced by the lowest common multiple of all conditions
     # Since the conditions are prime, reduce_by is the product of all conditions
     reduce_by = 1
@@ -92,8 +89,5 @@ def shenanigans(rounds=1, integer_divide_by=3, verbose=False):
     return most_active_monkey * second_most_active_monkey
 
 if __name__ == "__main__":
-    rounds = 20
-    print(f"Monkey business after {rounds} rounds (with integer division by 3): {shenanigans(rounds, integer_divide_by=3)}")
-    rounds = 10000
-    print(f"Monkey business after {rounds} rounds (no division): {shenanigans(rounds, integer_divide_by=False)}")
-    
+    print("Part 1:", shenanigans(read_input("test.txt"), 20, integer_divide_by=3))
+    print("Part 2:", shenanigans(read_input("test.txt"), 10000, integer_divide_by=False))
