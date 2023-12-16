@@ -40,12 +40,11 @@ def find_maximum_geodes(blueprint, total_minutes=24):
         c) t*(t+1)/2 => (0, 1, 3, 6, 10, ...)
     """
     max_ore_robots = blueprint[:, 0].max()
-    max_clay_robots = blueprint[:, 1].max()
-    max_obsidian_robots = blueprint[:, 2].max()
+    max_clay_robots = blueprint[:, 1].max()-1
+    max_obsidian_robots = blueprint[:, 2].max()-1
     max_geodes = 0
     build_orders = [[0], [1]]
-    build_orders = [[1, 1, 1, 2, 1, 2, 3]]
-    iteration = 0
+    # build_orders = [[1, 1, 1, 2, 1, 2, 3, 3]]
     for build_order in build_orders:
         # Simulate build order
         robots = np.array([1, 0, 0, 0], dtype=np.int32)
@@ -65,49 +64,35 @@ def find_maximum_geodes(blueprint, total_minutes=24):
                 break
         if minute >= total_minutes:
             continue
-        
+
         # Now check if we want to continue branching on this build_order
         time_left = total_minutes - minute
         minerals += time_left*robots
         ideal_number_of_geodes = minerals[-1]
         ideal_number_of_geodes += time_left*robots[-1]
-        ideal_number_of_geodes += int(time_left*(time_left-1)/2)
+        ideal_number_of_geodes += int(time_left*(time_left+1)/2)
         if ideal_number_of_geodes < max_geodes:
             continue
     
         max_geodes = max(minerals[-1], max_geodes)
-        print("\n", build_order, minerals)
-        print("Minute:", minute, "Time needed to build geode:", wait_minutes(blueprint, robots, minerals, 3))
-        if robots[2] > 0 and minute + wait_minutes(blueprint, robots, minerals, 3) < total_minutes:
-            build_orders.append(build_order + [3])
 
-        print("Time needed to build ore:", wait_minutes(blueprint, robots, minerals, 0))
         if robots[0] < max_ore_robots and minute + wait_minutes(blueprint, robots, minerals, 0) < total_minutes:
             build_orders.append(build_order + [0])
 
-        print("Time needed to build clay:", wait_minutes(blueprint, robots, minerals, 1))
         if robots[1] < max_clay_robots and minute + wait_minutes(blueprint, robots, minerals, 1) < total_minutes:
             build_orders.append(build_order + [1])
 
-        print("Time needed to build obsidian:", wait_minutes(blueprint, robots, minerals, 2))
         if robots[1] > 0 and robots[2] < max_obsidian_robots and minute + wait_minutes(blueprint, robots, minerals, 2) < total_minutes:
             build_orders.append(build_order + [2])
 
-        
+        if robots[2] > 0 and minute + wait_minutes(blueprint, robots, minerals, 3) < total_minutes:
+            build_orders.append(build_order + [3])
 
-        # print("\rBuild-orders:", len(build_orders), "max_geodes:", max_geodes, end="")
-    print()
     return max_geodes
 
 if __name__ == "__main__":  
     blueprints = read_input("test.txt")
     quality_level_sum = 0
-
     for i, bp in enumerate(blueprints):
-        geodes = find_maximum_geodes(bp)
-        print(bp)
-        print(f"Blueprint {i+1} opened {geodes} geodes")
-        quality_level_sum += (i+1)*geodes
-        break
-        
-    print(quality_level_sum)
+        quality_level_sum += (i+1)*find_maximum_geodes(bp)
+    print("\nPart 1:", quality_level_sum)
