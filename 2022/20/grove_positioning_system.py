@@ -22,7 +22,7 @@ def extract_groove_coordinates(decrypted_list, indices=[1000, 2000, 3000], start
        
 
 if __name__ == "__main__":  
-    encrypted_list = read_input("input.txt")
+    encrypted_list = read_input("test.txt")
     decrypted_list = decrypt(encrypted_list)
     coordinates = extract_groove_coordinates(decrypted_list)
     

@@ -1,4 +1,4 @@
-def read_input(filename="input.txt"):
+def read_input(filename="test.txt"):
     with open(filename, "r") as f:
         jets = []
         arrows = [c for c in f.readline()]
@@ -171,6 +171,6 @@ def let_rocks_fall(filename, n_rocks=2022):
 
 if __name__ == "__main__":
     print(let_rocks_fall("test.txt", n_rocks=2022)) # 3068
-    print(let_rocks_fall("input.txt", n_rocks=2022)) # 3141
+    print(let_rocks_fall("test.txt", n_rocks=2022)) # 3141
     print(let_rocks_fall("test.txt", n_rocks=1_000_000_000_000)) # 1514285714288
-    print(let_rocks_fall("input.txt", n_rocks=1_000_000_000_000)) # 1561739130391
+    print(let_rocks_fall("test.txt", n_rocks=1_000_000_000_000)) # 1561739130391

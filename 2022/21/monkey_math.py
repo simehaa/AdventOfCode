@@ -1,5 +1,5 @@
 monkeys = {}
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     for line in f:
         monkey, expr = line.rstrip().split(": ")
         if expr.isnumeric():

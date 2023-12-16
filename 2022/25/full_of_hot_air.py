@@ -69,7 +69,7 @@ class SNAFU:
 
 total = SNAFU("0")
 decimal_total = 0
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     for line in f:
         snafu = SNAFU(line.rstrip())
 
