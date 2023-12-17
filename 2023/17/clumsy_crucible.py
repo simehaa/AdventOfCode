@@ -1,3 +1,6 @@
+from heapq import heappush, heappop
+
+
 def read_file(filename):
     grid = []
     with open(filename) as f:
@@ -6,61 +9,54 @@ def read_file(filename):
     return grid
 
 
-def path_finding(grid, most=3):
+def djikstra(grid, least=1, most=3):
     height = len(grid)
     width = len(grid[0])
     goal = (height-1, width-1)
-    cache = {}
-    routes = [
-        {"path": [(0, 0)], "heat_loss": 0},
-    ]
-    finished_routes = []
-    for route in routes:
-        # print("\nConsidering", route)
+    priority_queue = [(0, 0, 0, 0, 0, 0)] # (heat_loss, y, x, dy, dx, steps)
+    visited = {}
+    while priority_queue:
+        # Check the highest priority path (by lowest heat loss)
+        heat_loss, y, x, dy, dx, steps = heappop(priority_queue)
 
-        # current position
-        current_path = route["path"]
-        current_heat_loss = route["heat_loss"]
-        yp, xp = current_path[-1]
-        for dy, dx in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            y = yp + dy
-            x = xp + dx
-            # Don't go outside grid, and don't go to a place
-            # that we have been on before
-            if (
-                y < 0 or y == height 
-                or x < 0 or x == width
-                or (y, x) in current_path
-            ):
-                continue
-            
-            new_path = current_path + [(y, x)]
-            new_heat_loss = current_heat_loss + grid[y][x]
-            # print("\tExtension", new_path)
-            
-            steps = 0
-            for i in range(1, len(new_path)): # -i = -1, -2, ...
-                _dy = new_path[-i][0] - new_path[-i-1][0]
-                _dx = new_path[-i][1] - new_path[-i-1][1]
-                if (_dy, _dx) != (dy, dx):
-                    break
-                steps += 1
-            if steps > most:
-                # print("\tRemoved because", steps, "steps in one direction")
-                continue
+        # Check if we're reached the end
+        if (y, x) == goal:
+            return heat_loss
 
-            if (y, x) == goal:
-                finished_routes.append({"path": new_path, "heat_loss": new_heat_loss})
-                continue
+        # Check if we've visited coordinate
+        # with same direction and same no. of steps
+        # If so, then that must have had lower heat loss
+        # since it was cached earlier in the priority queue
+        if (y, x, dy, dx, steps) in visited:
+            continue
+        visited[(y, x, dy, dx, steps)] = heat_loss
 
-            state = (y, x, dy*steps, dx*steps)
-            if (state in cache and new_heat_loss < cache[state]) or state not in cache:
-                cache[state] = new_heat_loss
-                # print("\tContinuing route")
-                routes.append({"path": new_path, "heat_loss": new_heat_loss})
+        # continue in same direction
+        if (
+            steps < most 
+            and (dy, dx) != (0, 0)
+            and 0 <= y+dy < height 
+            and 0 <= x+dx < width
+        ):
+            heappush(
+                priority_queue,
+                (heat_loss + grid[y+dy][x+dx], y+dy, x+dx, dy, dx, steps+1)
+            )
 
-    sorted_routes = sorted(finished_routes, key=lambda d: d["heat_loss"])
-    return sorted_routes[0]["heat_loss"]
+        # turn
+        if steps >= least or (dy, dx) == (0, 0):
+            for new_dy, new_dx in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
+                if (
+                    (new_dy, new_dx) != (dy, dx) 
+                    and (new_dy, new_dx) != (-dy, -dx)
+                    and 0 <= y+new_dy < height
+                    and 0 <= x+new_dx < width
+                ):
+                    heappush(
+                        priority_queue,
+                        (heat_loss + grid[y+new_dy][x+new_dx], y+new_dy, x+new_dx, new_dy, new_dx, 1)
+                    )
 
 
-print("Part 1:", path_finding(read_file("test.txt")))
+print("Part 1:", djikstra(read_file("test.txt"), most=3))
+print("Part 2:", djikstra(read_file("test.txt"), least=4, most=10))
