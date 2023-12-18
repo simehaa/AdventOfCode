@@ -1,17 +1,15 @@
 def readfile(filename, part=1):
     springs = []
     groups = []
-    with open(filename) as f:
-        lines = f.readlines()
-        for line in lines:
-            spring, group = line.rstrip().split()
-            group = tuple(map(int, group.split(",")))
-            if part == 1:
-                springs.append(spring + ".")
-                groups.append(group)
-            elif part == 2:
-                springs.append(((spring+"?")*5)[:-1] + ".")
-                groups.append(group*5) 
+    for line in open(filename):
+        spring, group = line.rstrip().split()
+        group = tuple(map(int, group.split(",")))
+        if part == 1:
+            springs.append(spring + ".")
+            groups.append(group)
+        elif part == 2:
+            springs.append(((spring+"?")*5)[:-1] + ".")
+            groups.append(group*5) 
     return springs, groups
 
 
@@ -38,11 +36,13 @@ def count_arrangements(spring, group):
     return arrangements    
 
 
-if __name__ == "__main__":
-    for filename in ["test.txt", "test.txt"]:
-        for part in [1, 2]:
-            springs, groups = readfile(filename, part=part)
-            total_sum_of_arrangements = 0
-            for spring, group in zip(springs, groups):
-                total_sum_of_arrangements += count_arrangements(spring, group)
-            print(filename, f"Part {part}:", total_sum_of_arrangements)
+def solve(springs, groups):
+    total_sum_of_arrangements = 0
+    for spring, group in zip(springs, groups):
+        total_sum_of_arrangements += count_arrangements(spring, group)
+
+    return total_sum_of_arrangements
+
+
+print("Part 1:", solve(*readfile("test.txt", part=1)))
+print("Part 2:", solve(*readfile("test.txt", part=2)))

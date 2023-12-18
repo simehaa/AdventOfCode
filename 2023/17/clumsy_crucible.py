@@ -1,14 +1,6 @@
 from heapq import heappush, heappop
 
 
-def read_file(filename):
-    grid = []
-    with open(filename) as f:
-        for l in f:
-            grid.append([int(c) for c in l.rstrip()])
-    return grid
-
-
 def djikstra(grid, least=1, most=3):
     height = len(grid)
     width = len(grid[0])
@@ -58,5 +50,6 @@ def djikstra(grid, least=1, most=3):
                     )
 
 
-print("Part 1:", djikstra(read_file("test.txt"), most=3))
-print("Part 2:", djikstra(read_file("test.txt"), least=4, most=10))
+grid = [[int(c) for c in l.rstrip()] for l in open("test.txt")]
+print("Part 1:", djikstra(grid, most=3))
+print("Part 2:", djikstra(grid, least=4, most=10))

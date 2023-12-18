@@ -54,8 +54,6 @@ def all_entry_points(grid):
     return max(energized)
 
 
-if __name__ == "__main__":
-    with open("test.txt" ,"r") as f:
-        grid = [line.rstrip() for line in f]
-    print("Part 1:", solve(grid))
-    print("Part 2:", all_entry_points(grid))
+grid = [line.rstrip() for line in open("test.txt")]
+print("Part 1:", solve(grid))
+print("Part 2:", all_entry_points(grid))

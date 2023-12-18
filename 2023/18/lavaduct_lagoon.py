@@ -1,7 +1,7 @@
 def area_of_trench(filename, part=1):
     area = 0
     y, x = 0, 0
-    for l in open(filename).readlines():
+    for l in open(filename):
         d, s, c = l.split()
         if part == 1:
             dy, dx = [(0, 1), (1, 0), (0, -1), (-1, 0)][["R", "D", "L", "U"].index(d)]

@@ -1,9 +1,6 @@
 class ParabolicReflector:
     def __init__(self, filename) -> None:
-        self.disc = []
-        with open(filename) as f:
-            for line in f.readlines():
-                self.disc.append(list(line.rstrip()))
+        self.disc = [list(l.rstrip()) for l in open(filename)]
         self.height = len(self.disc)
         self.width = len(self.disc[0])
 
@@ -48,12 +45,10 @@ class ParabolicReflector:
         loads = []
         repeated_loads = []
         repeated_signatures = []
-        for cycle in range(warm_up):
-            print(f"\rCycle {cycle}", end="")
+        for _ in range(warm_up):
             self.perform_full_tilt_cycle()
             loads.append(self.load_on_north_beam())
-        for cycle in range(look_back):
-            print(f"\rCycle {cycle+warm_up}", end="")
+        for _ in range(look_back):
             self.perform_full_tilt_cycle()
             loads.append(self.load_on_north_beam())
             signature = tuple(loads[-look_back:])
@@ -62,15 +57,13 @@ class ParabolicReflector:
             else:
                 repeated_signatures.append(signature)
                 repeated_loads.append(loads[-1])
-        print()
         repeat_after = len(repeated_signatures)
-        print(repeat_after)
         remaining = (1_000_000_000 - warm_up - 1) % repeat_after
+
         return repeated_loads[remaining]
 
 
-if __name__ == "__main__":
-    PR = ParabolicReflector("test.txt")
-    PR.tilt_in_one_direction(direction=(-1, 0))
-    print("Part 1:", PR.load_on_north_beam())
-    print("Part 2:", PR.find_load_after_billion_tilt_cycles())
+PR = ParabolicReflector("test.txt")
+PR.tilt_in_one_direction(direction=(-1, 0))
+print("Part 1:", PR.load_on_north_beam())
+print("Part 2:", PR.find_load_after_billion_tilt_cycles())
