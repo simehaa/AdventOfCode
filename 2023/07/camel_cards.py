@@ -1,9 +1,3 @@
-def readfile(filename):
-    with open(filename) as f:
-        lines = f.readlines()
-    return lines
-
-
 class Hand:
     def __init__(self, cards, bid, joker=False) -> None:
         self.cards = cards
@@ -78,28 +72,14 @@ class Hand:
             return False
 
 
-def solve(lines, part=1):
-    joker = False if part == 1 else True
-    hands = []
-    for line in lines:
-        hand, bid = line.split()
-        hands.append(Hand(hand, bid, joker=joker))
+def solve(lines, joker=False):
+    hands = [Hand(*l.split(), joker=joker) for l in lines]
     total_winnings = 0
     for i, hand in enumerate(sorted(hands)):
         total_winnings += hand.bid * (i + 1)
     return total_winnings
 
 
-def test_solve(part=1, test_solution=-1):
-    test_result = solve(readfile("test.txt"), part=part)
-    try:
-        assert test_result == test_solution
-    except AssertionError:
-        print(f"Test for part {part} failed: {test_result} != {test_solution}")
-    else:
-        result = solve(readfile("test.txt"), part=part)
-        print(f"Result for part {part}: {result}")
-
-if __name__ == "__main__":
-    test_solve(part=1, test_solution=6440)
-    test_solve(part=2, test_solution=5905)
+lines = list(open("test.txt"))
+print("Part 1:", solve(lines, joker=False))
+print("Part 2:", solve(lines, joker=True))

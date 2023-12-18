@@ -1,12 +1,3 @@
-def readfile(filename):
-    grid = []
-    with open(filename) as f:
-        lines = f.readlines()
-        for line in lines:
-            grid.append(line.rstrip())
-    return grid
-
-
 def find_loop(grid):
     start_position = ()
     height = len(grid)
@@ -147,8 +138,8 @@ def enclosed_by_loop(grid, loop, print_expanded_grid=False):
     
     return ones
 
-if __name__ == "__main__":
-    grid = readfile("test.txt")
-    loop = find_loop(grid)
-    print("Part 1:", len(loop)//2)
-    print("Part 2:", enclosed_by_loop(grid, loop, print_expanded_grid=False))
+
+grid = [l.rstrip() for l in open("test.txt")]
+loop = find_loop(grid)
+print("Part 1:", len(loop)//2)
+print("Part 2:", enclosed_by_loop(grid, loop, print_expanded_grid=False))

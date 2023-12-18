@@ -1,7 +1,7 @@
 def solve(filename, part=1):
     written_digits = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
     calibration_sum = 0
-    for line in open(filename).readlines():
+    for line in open(filename):
         digits = []
         for idx, value in enumerate(line):
             if value.isdigit():

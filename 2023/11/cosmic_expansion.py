@@ -2,12 +2,10 @@ def readfile(filename):
     grid = []
     columns_without_galaxies = []
     rows_without_galaxies = []
-    with open(filename) as f:
-        lines = f.readlines()
-        for y, line in enumerate(lines):
-            grid.append([c for c in line.rstrip()])
-            if "#" not in line:
-                rows_without_galaxies.append(y)
+    for y, line in enumerate(open(filename)):
+        grid.append([c for c in line.rstrip()])
+        if "#" not in line:
+            rows_without_galaxies.append(y)
     height = len(grid)
     width = len(grid[0])
     for x in range(width):
@@ -42,6 +40,5 @@ def solve(filename, replace=2):
     return lengths
 
 
-if __name__ == "__main__":
-    print("Part 1:", solve("test.txt"))
-    print("Part 2:", solve("test.txt", replace=100))
+print("Part 1:", solve("test.txt"))
+print("Part 2:", solve("test.txt", replace=100))

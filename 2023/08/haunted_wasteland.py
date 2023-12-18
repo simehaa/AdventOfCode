@@ -1,12 +1,6 @@
 from math import lcm
 
 
-def readfile(filename):
-    with open(filename) as f:
-        lines = f.readlines()
-    return lines
-
-
 def solve(lines, part=1):
     if part == 1:
         left_right = lines[0].strip()
@@ -59,8 +53,5 @@ def solve(lines, part=1):
         return lcm(*times)
 
 
-if __name__ == "__main__":
-    print(f"Part 1 test: {solve(readfile('part1.txt'), part=1)}")
-    print(f"Part 1: {solve(readfile('test.txt'), part=1)}")
-    print(f"Part 2 test: {solve(readfile('part2.txt'), part=2)}")
-    print(f"Part 2: {solve(readfile('test.txt'), part=2)}")
+print("Part 1:", solve(list(open("test_1.txt")), part=1))
+print("Part 2:", solve(list(open("test_2.txt")), part=2))
