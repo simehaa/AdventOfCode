@@ -147,10 +147,10 @@ class SurfaceWalker:
             print()
 
 
-def read_file(filename="input.txt"):
+def read_file(filename="test.txt"):
     grid = []
     actions = []
-    with open("input.txt", "r") as f:
+    with open("test.txt", "r") as f:
         for line in f:
             if "." in line or "#" in line:
                 grid.append(line.rstrip())

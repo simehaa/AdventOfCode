@@ -90,6 +90,6 @@ def outer_surface(filename):
 
 if __name__ == "__main__":
     print(full_surface("test.txt")) # 64
-    print(full_surface("input.txt")) # 3530
+    print(full_surface("test.txt")) # 3530
     print(outer_surface("test.txt")) # 58
-    print(outer_surface("input.txt")) # 2000
+    print(outer_surface("test.txt")) # 2000

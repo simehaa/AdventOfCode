@@ -38,7 +38,7 @@ if __name__ == "__main__":
     left = []
     right = []
 
-    with open("input.txt", "r") as f:
+    with open("test.txt", "r") as f:
         for i, line in enumerate(f):
             if i%3 == 0:
                 left.append(eval(line))
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         if compare(l, r):
             sum_of_indices += index
 
-    print(f"Sum of indices: {sum_of_indices}")
+    print("Part 1:", sum_of_indices)
 
     all_packets = left + right + [[[2]], [[6]]]
     n = len(all_packets)
@@ -65,4 +65,4 @@ if __name__ == "__main__":
 
     # Evaluate distress signal, which is the product of the indices (counting from 1) of [[2]] and [[6]]
     distress_signal = (all_packets.index([[2]]) + 1) * (all_packets.index([[6]]) + 1)
-    print(f"Distress signal: {distress_signal}")
+    print("Part 2:", distress_signal)
