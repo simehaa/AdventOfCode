@@ -1,7 +1,7 @@
 def readfile(filename, part=1):
     springs = []
     groups = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         for line in lines:
             spring, group = line.rstrip().split()
@@ -39,7 +39,7 @@ def count_arrangements(spring, group):
 
 
 if __name__ == "__main__":
-    for filename in ["test.txt", "input.txt"]:
+    for filename in ["test.txt", "test.txt"]:
         for part in [1, 2]:
             springs, groups = readfile(filename, part=part)
             total_sum_of_arrangements = 0

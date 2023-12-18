@@ -58,14 +58,12 @@ shape_score = {
     "Scissors": 3,
 }
 
-with open("test.txt", "r") as f:
-    score_strategy1 = 0
-    score_strategy2 = 0
-    for line in f:
-        opponent_move, my_move = line.split()
-        score_strategy1 += strategy1(opponent_move[0], my_move[0])
-        score_strategy2 += strategy2(opponent_move[0], my_move[0])
-
+score_strategy1 = 0
+score_strategy2 = 0
+for line in open("test.txt") :
+    opponent_move, my_move = line.split()
+    score_strategy1 += strategy1(opponent_move[0], my_move[0])
+    score_strategy2 += strategy2(opponent_move[0], my_move[0])
 
 print("Part 1:", score_strategy1)
 print("Part 2:", score_strategy2)

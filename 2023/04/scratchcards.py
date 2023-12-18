@@ -1,4 +1,4 @@
-with open("input.txt", "r") as f:
+with open("test.txt") as f:
     lines = f.readlines()
     score = 0
     scratch_cards = [1]*len(lines)

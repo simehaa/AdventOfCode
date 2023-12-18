@@ -22,7 +22,7 @@ class Blizzard:
                 
     def get_grid_from_file(self, filename):
         self.grid = []
-        with open(filename, "r") as f:
+        with open(filename) as f:
             for line in f:
                 self.grid.append([i for i in line.rstrip()])
 

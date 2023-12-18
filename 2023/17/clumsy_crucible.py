@@ -47,8 +47,8 @@ def djikstra(grid, least=1, most=3):
         if steps >= least or (dy, dx) == (0, 0):
             for new_dy, new_dx in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
                 if (
-                    (new_dy, new_dx) != (dy, dx) 
-                    and (new_dy, new_dx) != (-dy, -dx)
+                    (new_dy, new_dx) != (dy, dx) # same direction already added to queue
+                    and (new_dy, new_dx) != (-dy, -dx) # not allowed to go back
                     and 0 <= y+new_dy < height
                     and 0 <= x+new_dx < width
                 ):

@@ -1,6 +1,6 @@
 def get_grid(filename, pad=5): 
     unpadded_grid = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         for line in f:
             unpadded_grid.append([i for i in line.rstrip()])
 

@@ -1,5 +1,5 @@
 def readfile(filename):
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
     return lines
 
@@ -97,7 +97,7 @@ def test_solve(part=1, test_solution=-1):
     except AssertionError:
         print(f"Test for part {part} failed: {test_result} != {test_solution}")
     else:
-        result = solve(readfile("input.txt"), part=part)
+        result = solve(readfile("test.txt"), part=part)
         print(f"Result for part {part}: {result}")
 
 if __name__ == "__main__":

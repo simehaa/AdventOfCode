@@ -2,7 +2,7 @@ import re
 
 
 directories = {}
-with open("test.txt", "r") as f:
+with open("test.txt") as f:
     path = []
     for line in f:
         cd_down = re.findall(r"\$ cd ([A-Za-z/]+)", line)

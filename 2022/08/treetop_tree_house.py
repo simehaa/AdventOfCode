@@ -1,6 +1,6 @@
 grid = []
 
-with open("test.txt", "r") as f:
+with open("test.txt") as f:
     for line in f:
         row = []
         for c in line:

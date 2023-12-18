@@ -1,5 +1,5 @@
 def read_input(filename="test.txt"):
-    with open(filename, "r") as f:
+    with open(filename) as f:
         jets = []
         arrows = [c for c in f.readline()]
         for arrow in arrows:

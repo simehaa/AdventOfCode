@@ -1,6 +1,6 @@
 overlap = 0
 fully_contained = 0
-with open("test.txt", "r") as f:
+with open("test.txt") as f:
     for line in f:
         elf1, elf2 = line.split(",")
         elf1 = elf1.split("-")

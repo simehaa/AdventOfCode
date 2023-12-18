@@ -22,7 +22,7 @@ def solve(filename, part=1):
     locations = range(0, 0)
     rising_lines = [] # b
     falling_lines = [] # c
-    with open(filename, "r") as f:
+    with open(filename) as f:
         for line in f:
             x0, y0, x1, y1 = re.findall(r"-?\d+", line)
             x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)

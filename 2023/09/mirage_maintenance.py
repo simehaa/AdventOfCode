@@ -1,6 +1,6 @@
 def readfile(filename):
     numbers = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
     return lines
 
@@ -23,5 +23,5 @@ def solve(lines, part=1):
 if __name__ == "__main__":
     print("Part 1 (test):", solve(readfile("test.txt"), part=1))
     print("Part 2 (test):", solve(readfile("test.txt"), part=2))
-    print("Part 1:", solve(readfile("input.txt"), part=1))
-    print("Part 2:", solve(readfile("input.txt"), part=2))
+    print("Part 1:", solve(readfile("test.txt"), part=1))
+    print("Part 2:", solve(readfile("test.txt"), part=2))

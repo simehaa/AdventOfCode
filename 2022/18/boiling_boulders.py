@@ -1,5 +1,5 @@
 def read_input(filename):
-    with open(filename, "r") as f:
+    with open(filename) as f:
         return [eval(line) for line in f]
 
 

@@ -2,7 +2,7 @@ def readfile(filename):
     grid = []
     columns_without_galaxies = []
     rows_without_galaxies = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         for y, line in enumerate(lines):
             grid.append([c for c in line.rstrip()])

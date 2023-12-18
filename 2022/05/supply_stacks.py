@@ -1,7 +1,7 @@
 crate_lines = []
 instruction_lines = []
 
-with open("test.txt", "r") as f:
+with open("test.txt") as f:
     # Read initial crate configuration
     crate_line_active = True
     for line in f:

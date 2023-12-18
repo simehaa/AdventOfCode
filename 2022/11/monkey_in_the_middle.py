@@ -1,6 +1,6 @@
 def read_input(filename):
     monkeys = {}
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         for i, line in enumerate(lines):
             words = line.split()

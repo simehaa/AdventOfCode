@@ -1,6 +1,6 @@
 def readfile(filename):
     mirrors = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         mirror = []
         for line in lines:
@@ -52,7 +52,7 @@ def find_column(mirror, smudges=0):
 if __name__ == "__main__":
     for part in [1, 2]:
         total_sum = 0
-        for mirror in readfile("input.txt"):
+        for mirror in readfile("test.txt"):
             total_sum += 100*find_row(mirror, smudges=part-1)
             total_sum += find_column(mirror, smudges=part-1)
         print(f"Part {part}:", total_sum)

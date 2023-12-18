@@ -1,5 +1,5 @@
 def read_input(filename):
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         current_mapping = ""
         map_ranges = {}
@@ -46,7 +46,7 @@ def get_seed(location):
 
 
 if __name__ == "__main__":
-    seeds, map_ranges = read_input("input.txt")
+    seeds, map_ranges = read_input("test.txt")
 
     # Part 1
     print(min([get_location(seed, map_ranges) for seed in seeds])) # 993500720

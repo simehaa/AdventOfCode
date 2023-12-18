@@ -38,7 +38,7 @@ if __name__ == "__main__":
     left = []
     right = []
 
-    with open("test.txt", "r") as f:
+    with open("test.txt") as f:
         for i, line in enumerate(f):
             if i%3 == 0:
                 left.append(eval(line))

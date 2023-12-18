@@ -1,4 +1,4 @@
-with open("test.txt", "r") as f:
+with open("test.txt") as f:
     signal = f.readline()
     for j, part in zip([4, 14], [1, 2]):
         for i in range(j, len(signal)):

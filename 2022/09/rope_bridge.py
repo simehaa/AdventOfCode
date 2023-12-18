@@ -98,7 +98,7 @@ if __name__ == "__main__":
     for r, part in zip([2, 10], [1, 2]):
         directions = []
         steps = []
-        with open(f"test{part}.txt", "r") as f:
+        with open(f"test{part}.txt") as f:
             for line in f:
                 d, s = line.split()
                 directions.append(d)

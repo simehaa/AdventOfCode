@@ -2,7 +2,7 @@ import numpy as np
 
 def read_input(filename):
     blueprints = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         for line in f.readlines():
             words = line.split()
             blueprint = np.zeros((4, 4), dtype=np.int64)
@@ -91,8 +91,12 @@ def find_maximum_geodes(blueprint, total_minutes=24):
     return max_geodes
 
 if __name__ == "__main__":  
-    blueprints = read_input("test.txt")
+    blueprints = read_input("input.txt")
     quality_level_sum = 0
+    first_three_product = 1
     for i, bp in enumerate(blueprints):
-        quality_level_sum += (i+1)*find_maximum_geodes(bp)
-    print("\nPart 1:", quality_level_sum)
+        # quality_level_sum += (i+1)*find_maximum_geodes(bp, 24)
+        if i < 3 and i < len(blueprints):
+            first_three_product *= find_maximum_geodes(bp, 32)
+    # print("Part 1:", quality_level_sum)
+    print("Part 2:", first_three_product)

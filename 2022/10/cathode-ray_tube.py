@@ -17,7 +17,7 @@ def update_X(X, instruction):
 
 def read_input():
     instructions = []
-    with open("test.txt", "r") as f:
+    with open("test.txt") as f:
         for line in f:
             instructions.append(line.split())
     return instructions

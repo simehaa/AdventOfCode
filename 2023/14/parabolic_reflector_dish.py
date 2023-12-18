@@ -1,7 +1,7 @@
 class ParabolicReflector:
     def __init__(self, filename) -> None:
         self.disc = []
-        with open(filename, "r") as f:
+        with open(filename) as f:
             for line in f.readlines():
                 self.disc.append(list(line.rstrip()))
         self.height = len(self.disc)

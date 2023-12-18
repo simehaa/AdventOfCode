@@ -6,7 +6,7 @@ def read_file(filename):
     flow_rates = [0]
     leads_to = {}
 
-    with open(filename, "r") as f:
+    with open(filename) as f:
         for line in f:
             words = line.split(" ")
             this_valve = words[1]

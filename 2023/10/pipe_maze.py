@@ -1,6 +1,6 @@
 def readfile(filename):
     grid = []
-    with open(filename, "r") as f:
+    with open(filename) as f:
         lines = f.readlines()
         for line in lines:
             grid.append(line.rstrip())
