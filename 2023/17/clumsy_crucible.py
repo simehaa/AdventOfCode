@@ -5,8 +5,11 @@ def djikstra(grid, least=1, most=3):
     height = len(grid)
     width = len(grid[0])
     goal = (height-1, width-1)
-    priority_queue = [(0, 0, 0, 0, 0, 0)] # (heat_loss, y, x, dy, dx, steps)
-    visited = {}
+    priority_queue = [
+        (0, 0, 0, 0, 1, 0),
+        (0, 0, 0, 1, 0, 0),
+    ] # (heat_loss, y, x, dy, dx, steps)
+    visited = set()
     while priority_queue:
         # Check the highest priority path (by lowest heat loss)
         heat_loss, y, x, dy, dx, steps = heappop(priority_queue)
@@ -15,18 +18,14 @@ def djikstra(grid, least=1, most=3):
         if (y, x) == goal:
             return heat_loss
 
-        # Check if we've visited coordinate
-        # with same direction and same no. of steps
-        # If so, then that must have had lower heat loss
-        # since it was cached earlier in the priority queue
+        # Check if we've visited this exact state
         if (y, x, dy, dx, steps) in visited:
             continue
-        visited[(y, x, dy, dx, steps)] = heat_loss
+        visited.add((y, x, dy, dx, steps))
 
         # continue in same direction
         if (
-            steps < most 
-            and (dy, dx) != (0, 0)
+            steps < most
             and 0 <= y+dy < height 
             and 0 <= x+dx < width
         ):
@@ -35,8 +34,8 @@ def djikstra(grid, least=1, most=3):
                 (heat_loss + grid[y+dy][x+dx], y+dy, x+dx, dy, dx, steps+1)
             )
 
-        # turn
-        if steps >= least or (dy, dx) == (0, 0):
+        # turn right and left
+        if steps >= least:
             for new_dy, new_dx in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
                 if (
                     (new_dy, new_dx) != (dy, dx) # same direction already added to queue
