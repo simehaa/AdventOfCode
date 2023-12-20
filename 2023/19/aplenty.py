@@ -5,15 +5,12 @@ from operator import lt, gt
 workflows = {}
 ratings = []
 done_reading_workflows = False
-for line in open("test.txt") :
-    if line == "\n":
-        done_reading_workflows = True
-        continue
-    elif done_reading_workflows:
-        ratings.append([int(d) for d in re.findall(r"\d+", line)])
-    else:
-        name, conditions = line[:-2].split("{")
-        workflows[name] = conditions.split(",")
+workflow_lines, ratings_lines = open("test.txt").read().split("\n\n")
+for line in workflow_lines.splitlines():
+    name, conditions = line[:-1].split("{")
+    workflows[name] = conditions.split(",")
+for line in ratings_lines.splitlines():
+    ratings.append([int(d) for d in re.findall(r"\d+", line)])        
 
 
 def execute_workflow(x, m, a, s, name="in"):
