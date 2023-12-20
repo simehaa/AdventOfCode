@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class SurfaceWalker:
     def __init__(self,
         grid,
@@ -17,12 +14,11 @@ class SurfaceWalker:
         self.grid = []
         for row in grid:
             self.grid.append([c for c in row])
-        y, x = initial_coordinates
-        self.grid[y][x] = "\033[38;2;255;100;100mX\033[0m"
+        #self.grid[y][x] = "\033[38;2;255;100;100mX\033[0m"
         self.len_y = len(grid)
         self.len_x = len(grid[0])
         self.boundary_condition = boundary_condition
-        self.coordinates = np.array(initial_coordinates)
+        self.coordinates = initial_coordinates
         self.facing = 0
         # Tables below should be indexed with self.facing%4
         self.cardinal_table = ["E", "S", "W", "N"]
@@ -32,13 +28,26 @@ class SurfaceWalker:
         # self.side stores the face at each coordinate
         N = side_length
         self.N = N
-        self.side = np.zeros((N*4, N*3))
-        self.side[0*N:1*N, 1*N:2*N] = 1
-        self.side[0*N:1*N, 2*N:3*N] = 2
-        self.side[1*N:2*N, 1*N:2*N] = 3
-        self.side[2*N:3*N, 0*N:1*N] = 4
-        self.side[2*N:3*N, 1*N:2*N] = 5
-        self.side[3*N:4*N, 0*N:1*N] = 6
+        self.side = []
+        for y in range(4*N):
+            row = []
+            for x in range(3*N):
+                if 0*N <= y < 1*N and 1*N <= x < 2*N:
+                    side = 1
+                elif 0*N <= y < 1*N and 2*N <= x < 3*N:
+                    side = 2
+                elif 1*N <= y < 2*N and 1*N <= x < 2*N:
+                    side = 3
+                elif 2*N <= y < 3*N and 0*N <= x < 1*N:
+                    side = 4
+                elif 2*N <= y < 3*N and 1*N <= x < 2*N:
+                    side = 5
+                elif 3*N <= y < 4*N and 0*N <= x < 1*N:
+                    side = 6
+                else:
+                    side = 0
+                row.append(side)
+            self.side.append(row)
         self.color_counter = 0
         self.red = 0
         self.green = 0
@@ -90,7 +99,7 @@ class SurfaceWalker:
                         4  5  .
                         6  .  .
                         """
-                        if self.side[y, x] == self.side[ny, nx]:
+                        if self.side[y][x] == self.side[ny][nx]:
                             if self.grid[ny][nx] == "#":
                                 break
                             else:
@@ -100,32 +109,32 @@ class SurfaceWalker:
                             N = self.N
                             sy = y % N
                             sx = x % N
-                            if self.side[y, x] == 1:
+                            if self.side[y][x] == 1:
                                 ny = [sy, N, 3*N-sy-1, 3*N+sx][self.facing]
                                 nx = [2*N, N+sx, 0, 0][self.facing]
                                 new_facing = [0, 1, 0, 0][self.facing]
-                            elif self.side[y, x] == 2:
+                            elif self.side[y][x] == 2:
                                 ny = [3*N-sy-1, N+sx, sy, 4*N-1][self.facing]
                                 nx = [2*N-1, 2*N-1, 2*N-1, sx][self.facing]
                                 new_facing = [2, 2, 2, 3][self.facing]
-                            elif self.side[y, x] == 3:
+                            elif self.side[y][x] == 3:
                                 ny = [N-1, 2*N, 2*N, N-1][self.facing]
                                 nx = [2*N+sy, N+sx, sy, N+sx][self.facing]
                                 new_facing = [3, 1, 1, 3][self.facing]
-                            elif self.side[y, x] == 4:
+                            elif self.side[y][x] == 4:
                                 ny = [2*N+sy, 3*N, N-sy-1, N+sx][self.facing]
                                 nx = [N, sx, N, N][self.facing]
                                 new_facing = [0, 1, 0, 0][self.facing]
-                            elif self.side[y, x] == 5:
+                            elif self.side[y][x] == 5:
                                 ny = [N-sy-1, 3*N+sx, 2*N+sy, 2*N-1][self.facing]
                                 nx = [3*N-1, N-1, N-1, N+sx][self.facing]
                                 new_facing = [2, 2, 2, 3][self.facing]
-                            elif self.side[y, x] == 6:
+                            elif self.side[y][x] == 6:
                                 ny = [3*N-1, 0, 0, 3*N-1][self.facing]
                                 nx = [N+sy, 2*N+sx, N+sy, sx][self.facing]
                                 new_facing = [3, 1, 1, 3][self.facing]
                             else:
-                                raise ValueError(f"Invalid side {self.side[y, x]}")
+                                raise ValueError(f"Invalid side {self.side[y][x]}")
                             if self.grid[ny][nx] == "#":
                                 break
                             else:
@@ -147,10 +156,10 @@ class SurfaceWalker:
             print()
 
 
-def read_file(filename="test.txt"):
+def read_file(filename="input.txt"):
     grid = []
     actions = []
-    with open("test.txt") as f:
+    with open(filename) as f:
         for line in f:
             if "." in line or "#" in line:
                 grid.append(line.rstrip())
