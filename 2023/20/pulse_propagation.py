@@ -1,3 +1,6 @@
+from math import lcm
+
+
 class PulsePropagation:
     def __init__(self, filename):
         self.modules = {}
@@ -26,7 +29,6 @@ class PulsePropagation:
                     dest_properties["sources"][source] = "low"
 
     def press_button(self):
-        rx_low_pulse_counter = 0
         low_pulse_counter = 1
         high_pulse_counter = 0
         receivers = [("broadcaster", dest, "low") for dest in self.modules["broadcaster"]["destinations"]]
@@ -34,8 +36,6 @@ class PulsePropagation:
             # print(f"{source} -{pulse}-> {dest}")
             if pulse == "low":
                 low_pulse_counter += 1
-                if dest == "rx":
-                    rx_low_pulse_counter += 1
             elif pulse == "high":
                 high_pulse_counter += 1
 
@@ -59,24 +59,40 @@ class PulsePropagation:
 
             receivers += [(dest, new_dest, send_pulse) for new_dest in self.modules[dest]["destinations"]]
 
-        return low_pulse_counter, high_pulse_counter, rx_low_pulse_counter
+        return low_pulse_counter, high_pulse_counter
+    
+    def reset(self):
+        for _, module in self.modules.items():
+            if module["type"] == "flip_flop":
+                module["state"] = "off"
+            elif module["type"] == "conjunction":
+                for s, p in module["sources"].items():
+                    p = "off"
 
 
-PP = PulsePropagation("test.txt")
+PP = PulsePropagation("input.txt")
 low_pulses = 0
 high_pulses = 0
 for i in range(1000):
-    l, h, rx = PP.press_button()
+    l, h = PP.press_button()
     low_pulses += l
     high_pulses += h
 print("Part 1:", low_pulses*high_pulses)
 
-PP = PulsePropagation("test.txt")
-i = 0
-while True:
-    i += 1
-    l, h, rx = PP.press_button()
-    print(f"\rrx={rx}, i={i}", end="")
-    if rx == 1:
-        print("Part 2:", i)
+for name, module in PP.modules.items():
+    if "rx" in module["destinations"]:
         break
+sources = PP.modules[name]["sources"].keys()
+periods = []
+for source in sources:
+    PP.reset()
+    i = 0
+    while True:
+        PP.press_button()
+        print(f"\rfinding periodicity of {source}, i={i}", end="")
+        i += 1
+        if PP.modules[name]["sources"][source] == "high":
+            periods.append(i)
+            break
+    print("\n", i)
+print("Part 2:", lcm(*periods))
