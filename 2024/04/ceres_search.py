@@ -19,10 +19,10 @@ def solve(filename):
         matches += len(re.findall(p, l))
 
     # diagonals
-    for d in range(h+w-1):
+    for d in range(h + w - 1):
         l1 = ""
         l2 = ""
-        for x in range(max(0, d-w+1), min(d+1, h)):
+        for x in range(max(0, d - w + 1), min(d + 1, h)):
             y1 = d - x
             y2 = h - 1 - (d - x)
             l1 += grid[y1][x]
@@ -38,18 +38,19 @@ def part2(filename):
     h = len(grid)
     w = len(grid[0])
     matches = 0
-    for y in range(1, h-1):
-        for x in range(1, w-1):
+    for y in range(1, h - 1):
+        for x in range(1, w - 1):
             if grid[y][x] != "A":
                 continue
-            diag = grid[y-1][x-1] + grid[y+1][x+1]
+            diag = grid[y - 1][x - 1] + grid[y + 1][x + 1]
             if diag not in ["MS", "SM"]:
                 continue
-            diag = grid[y-1][x+1] + grid[y+1][x-1]
+            diag = grid[y - 1][x + 1] + grid[y + 1][x - 1]
             if diag not in ["MS", "SM"]:
                 continue
             matches += 1
     print(matches)
+
 
 solve("test.txt")
 solve("input.txt")

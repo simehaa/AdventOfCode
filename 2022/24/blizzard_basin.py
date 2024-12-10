@@ -4,13 +4,13 @@ class Blizzard:
         self.height = len(self.grid)
         self.width = len(self.grid[0])
         self.start = (0, 1)
-        self.end = (self.height-1, self.width-2)
+        self.end = (self.height - 1, self.width - 2)
         self.north_blizzards = []
         self.south_blizzards = []
         self.east_blizzards = []
         self.west_blizzards = []
-        for y in range(1, self.height-1):
-            for x in range(1, self.width-1):
+        for y in range(1, self.height - 1):
+            for x in range(1, self.width - 1):
                 if self.grid[y][x] == "^":
                     self.north_blizzards.append((y, x))
                 elif self.grid[y][x] == "v":
@@ -19,7 +19,7 @@ class Blizzard:
                     self.east_blizzards.append((y, x))
                 elif self.grid[y][x] == "<":
                     self.west_blizzards.append((y, x))
-                
+
     def get_grid_from_file(self, filename):
         self.grid = []
         with open(filename) as f:
@@ -56,36 +56,40 @@ class Blizzard:
                 string += char
             string += "\n"
         return string[:-1]
-    
+
     def simulate(self, start, goal):
         paths = [[start]]
         reached_end = False
         while not reached_end:
-            self.north_blizzards = [((y-1-1)%(self.height-2)+1, x) for y, x in self.north_blizzards]
-            self.south_blizzards = [((y+1-1)%(self.height-2)+1, x) for y, x in self.south_blizzards]
-            self.east_blizzards = [(y, (x+1-1)%(self.width-2)+1) for y, x in self.east_blizzards]
-            self.west_blizzards = [(y, (x-1-1)%(self.width-2)+1) for y, x in self.west_blizzards]
+            self.north_blizzards = [
+                ((y - 1 - 1) % (self.height - 2) + 1, x) for y, x in self.north_blizzards
+            ]
+            self.south_blizzards = [
+                ((y + 1 - 1) % (self.height - 2) + 1, x) for y, x in self.south_blizzards
+            ]
+            self.east_blizzards = [
+                (y, (x + 1 - 1) % (self.width - 2) + 1) for y, x in self.east_blizzards
+            ]
+            self.west_blizzards = [
+                (y, (x - 1 - 1) % (self.width - 2) + 1) for y, x in self.west_blizzards
+            ]
             new_paths = []
             for path in paths.copy():
                 y, x = path[-1]
-                moves = [
-                    (y, x),
-                    (y-1, x),
-                    (y+1, x),
-                    (y, x-1),
-                    (y, x+1),
-                ]
+                moves = [(y, x), (y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1)]
                 for yn, xn in moves:
                     if (yn, xn) == goal:
                         reached_end = True
                         shortest_path = path + [(yn, xn)]
                     elif (
-                        (yn, xn) not in self.north_blizzards 
+                        (yn, xn) not in self.north_blizzards
                         and (yn, xn) not in self.south_blizzards
                         and (yn, xn) not in self.east_blizzards
                         and (yn, xn) not in self.west_blizzards
-                        and yn > 0 and yn < self.height-1 
-                        and xn > 0 and xn < self.width-1
+                        and yn > 0
+                        and yn < self.height - 1
+                        and xn > 0
+                        and xn < self.width - 1
                     ) or (yn, xn) == start:
                         for other_path in new_paths:
                             if (yn, xn) == other_path[-1]:
@@ -94,6 +98,7 @@ class Blizzard:
                             new_paths.append(path + [(yn, xn)])
             paths = new_paths
         return len(shortest_path[1:])
+
 
 if __name__ == "__main__":
     B = Blizzard("test.txt")

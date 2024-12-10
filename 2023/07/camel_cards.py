@@ -9,65 +9,63 @@ class Hand:
         if not self.joker or "J" not in unique_cards:
             if len(unique_cards) == 1:
                 return "five of a kind"
-            elif len(unique_cards) == 2:
+            if len(unique_cards) == 2:
                 if self.cards.count(unique_cards[0]) == 4 or self.cards.count(unique_cards[1]) == 4:
                     return "four of a kind"
-                else:
-                    return "full house"
-            elif len(unique_cards) == 3:
-                if self.cards.count(unique_cards[0]) == 3 or self.cards.count(unique_cards[1]) == 3 or self.cards.count(unique_cards[2]) == 3:
+                return "full house"
+            if len(unique_cards) == 3:
+                if (
+                    self.cards.count(unique_cards[0]) == 3
+                    or self.cards.count(unique_cards[1]) == 3
+                    or self.cards.count(unique_cards[2]) == 3
+                ):
                     return "three of a kind"
-                else:
-                    return "two pairs"
-            elif len(unique_cards) == 4:
+                return "two pairs"
+            if len(unique_cards) == 4:
                 return "one pair"
-            else:
-                return "high card"
-        else:
-            if len(unique_cards) <= 2:
-                return "five of a kind"
-            elif len(unique_cards) == 3:
-                if self.cards.count("J") in [2, 3]:
-                    return "four of a kind"
-                elif self.cards.count(unique_cards[0]) == 3 or self.cards.count(unique_cards[1]) == 3 or self.cards.count(unique_cards[2]) == 3:
-                    return "four of a kind"
-                else:
-                    return "full house"
-            elif len(unique_cards) == 4:
-                return "three of a kind"
-            else:
-                return "one pair"
-            
+            return "high card"
+        if len(unique_cards) <= 2:
+            return "five of a kind"
+        if len(unique_cards) == 3:
+            if self.cards.count("J") in [2, 3] or (
+                self.cards.count(unique_cards[0]) == 3
+                or self.cards.count(unique_cards[1]) == 3
+                or self.cards.count(unique_cards[2]) == 3
+            ):
+                return "four of a kind"
+            return "full house"
+        if len(unique_cards) == 4:
+            return "three of a kind"
+        return "one pair"
+
     def get_type_rank(self):
         return [
             "high card",
             "one pair",
-            "two pairs", 
-            "three of a kind", 
-            "full house", 
-            "four of a kind", 
-            "five of a kind", 
+            "two pairs",
+            "three of a kind",
+            "full house",
+            "four of a kind",
+            "five of a kind",
         ].index(self.get_type())
-    
+
     def get_card_rank(self, card):
         if self.joker:
             return ["J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"].index(card)
-        else:
-            return ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"].index(card)
+        return ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"].index(card)
 
     def __gt__(self, other):
         if self.get_type_rank() > other.get_type_rank():
             return True
-        elif self.get_type_rank() == other.get_type_rank():
+        if self.get_type_rank() == other.get_type_rank():
             for this_card, other_card in zip(self.cards, other.cards):
                 this_card_rank = self.get_card_rank(this_card)
                 other_card_rank = self.get_card_rank(other_card)
                 if this_card_rank == other_card_rank:
                     continue
-                elif this_card_rank > other_card_rank:
+                if this_card_rank > other_card_rank:
                     return True
-                else:
-                    return False
+                return False
         else:
             return False
 

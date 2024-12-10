@@ -12,6 +12,7 @@ def equal(s, nums, third=False):
         or (third and equal(s, (con,) + nums[2:], third))
     )
 
+
 def solve(filename):
     t1, t2 = 0, 0
     with open(filename) as f:
@@ -22,6 +23,7 @@ def solve(filename):
             t1 += equal(s, nums, False)
             t2 += equal(s, nums, True)
     print(t1, t2)
+
 
 solve("test.txt")
 solve("input.txt")

@@ -5,11 +5,11 @@ with open("test.txt") as f:
         if expr.isnumeric():
             globals()[monkey] = eval(expr)
         elif monkey == "root":
-            root_a, root_op, root_b  = expr.split(" ")
+            root_a, root_op, root_b = expr.split(" ")
         else:
             monkeys[monkey] = expr
 
-# while monkeys: 
+# while monkeys:
 #     new_monkeys = []
 #     for monkey, expr in monkeys.items():
 #         try:
@@ -29,7 +29,9 @@ while new_dependent_monkeys_added:
     new_dependent_monkeys_added = False
     for monkey, expr in monkeys.items():
         a, op, b = expr.split()
-        if (monkey not in monkeys_depend_on_humn) and (a in monkeys_depend_on_humn or b in monkeys_depend_on_humn):
+        if (monkey not in monkeys_depend_on_humn) and (
+            a in monkeys_depend_on_humn or b in monkeys_depend_on_humn
+        ):
             monkeys_depend_on_humn.append(monkey)
             new_dependent_monkeys_added = True
 
@@ -60,15 +62,16 @@ def test_new_number(humn, root_a, root_b, monkeys):
                 new_monkeys.append(monkey)
             except NameError:
                 pass
-        
+
         for monkey in new_monkeys:
-           del monkeys[monkey]
+            del monkeys[monkey]
 
     if eval(root_a) == eval(root_b):
         print(f"humn = {int(humn)} gave the CORRECT result")
         exit()
     else:
-        return eval(root_a)/eval(root_b)
+        return eval(root_a) / eval(root_b)
+
 
 # Found these two numbers which resulted in 2.29 and -2.01,
 # We want to converge towards 1, and I here use the "half-step method"
@@ -85,4 +88,4 @@ while True:
         upper_in = middle_in
     else:
         # Didn't go far enough, thus answer must lie in the upper half
-        lower_in = middle_in        
+        lower_in = middle_in

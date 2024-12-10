@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-
 year = int(sys.argv[1])
 assert year > 2014 and int(year) < 2100
 year = Path(f"{year:4d}")

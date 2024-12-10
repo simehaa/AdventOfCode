@@ -42,7 +42,7 @@ def shenanigans(monkeys, rounds=1, integer_divide_by=3, verbose=False):
                 monkey["inspections"] += 1
                 if verbose:
                     print(f"\tMonkey inspects an item with a worry level of {item}")
-                
+
                 # Perform operation (a <op> b)
                 if monkey["operation"][0] == "old":
                     a = item
@@ -69,16 +69,20 @@ def shenanigans(monkeys, rounds=1, integer_divide_by=3, verbose=False):
                 worry_level %= reduce_by
                 if verbose:
                     print(f"\t\tWorry level decreased to {worry_level}")
-                
+
                 # Monkey will now check the condition, before throwing the item to another monkey
                 if worry_level % monkey["condition"] == 0:
-                    monkeys[monkey["if_true"]]["items"].append(worry_level)       
+                    monkeys[monkey["if_true"]]["items"].append(worry_level)
                     if verbose:
-                        print(f"\t\tItem with worry level {worry_level} is thrown to monkey {monkey['if_true']}")
+                        print(
+                            f"\t\tItem with worry level {worry_level} is thrown to monkey {monkey['if_true']}"
+                        )
                 else:
                     monkeys[monkey["if_false"]]["items"].append(worry_level)
                     if verbose:
-                        print(f"\t\tItem with worry level {worry_level} is thrown to monkey {monkey['if_false']}")
+                        print(
+                            f"\t\tItem with worry level {worry_level} is thrown to monkey {monkey['if_false']}"
+                        )
 
     # Monkey business is the produce of the two most active monkeys
     inspections = [monkey["inspections"] for key, monkey in monkeys.items()]
@@ -87,6 +91,7 @@ def shenanigans(monkeys, rounds=1, integer_divide_by=3, verbose=False):
     second_most_active_monkey = max(inspections)
 
     return most_active_monkey * second_most_active_monkey
+
 
 if __name__ == "__main__":
     print("Part 1:", shenanigans(read_input("test.txt"), 20, integer_divide_by=3))

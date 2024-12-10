@@ -1,10 +1,6 @@
 class SurfaceWalker:
-    def __init__(self,
-        grid,
-        actions,
-        initial_coordinates=(0,50),
-        boundary_condition="torus",
-        side_length=50,
+    def __init__(
+        self, grid, actions, initial_coordinates=(0, 50), boundary_condition="torus", side_length=50
     ):
         """
         caridnal_direction: 'E', 'S', 'W', or 'N', initial direction
@@ -14,7 +10,7 @@ class SurfaceWalker:
         self.grid = []
         for row in grid:
             self.grid.append([c for c in row])
-        #self.grid[y][x] = "\033[38;2;255;100;100mX\033[0m"
+        # self.grid[y][x] = "\033[38;2;255;100;100mX\033[0m"
         self.len_y = len(grid)
         self.len_x = len(grid[0])
         self.boundary_condition = boundary_condition
@@ -29,20 +25,20 @@ class SurfaceWalker:
         N = side_length
         self.N = N
         self.side = []
-        for y in range(4*N):
+        for y in range(4 * N):
             row = []
-            for x in range(3*N):
-                if 0*N <= y < 1*N and 1*N <= x < 2*N:
+            for x in range(3 * N):
+                if 0 * N <= y < 1 * N and 1 * N <= x < 2 * N:
                     side = 1
-                elif 0*N <= y < 1*N and 2*N <= x < 3*N:
+                elif 0 * N <= y < 1 * N and 2 * N <= x < 3 * N:
                     side = 2
-                elif 1*N <= y < 2*N and 1*N <= x < 2*N:
+                elif 1 * N <= y < 2 * N and 1 * N <= x < 2 * N:
                     side = 3
-                elif 2*N <= y < 3*N and 0*N <= x < 1*N:
+                elif 2 * N <= y < 3 * N and 0 * N <= x < 1 * N:
                     side = 4
-                elif 2*N <= y < 3*N and 1*N <= x < 2*N:
+                elif 2 * N <= y < 3 * N and 1 * N <= x < 2 * N:
                     side = 5
-                elif 3*N <= y < 4*N and 0*N <= x < 1*N:
+                elif 3 * N <= y < 4 * N and 0 * N <= x < 1 * N:
                     side = 6
                 else:
                     side = 0
@@ -55,22 +51,22 @@ class SurfaceWalker:
 
     def get_passwd(self):
         y, x = self.coordinates
-        passwd = 1000*(y+1) + 4*(x+1) + self.facing
+        passwd = 1000 * (y + 1) + 4 * (x + 1) + self.facing
         return passwd
 
     def color_character(self, char):
-        cycle = 6*128
+        cycle = 6 * 128
         if self.color_counter % cycle < 128:
             self.red += 1
-        elif self.color_counter % cycle < 2*128:
+        elif self.color_counter % cycle < 2 * 128:
             self.red -= 1
-        elif self.color_counter % cycle < 3*128:
+        elif self.color_counter % cycle < 3 * 128:
             self.green += 1
-        elif self.color_counter % cycle < 4*128:
+        elif self.color_counter % cycle < 4 * 128:
             self.green -= 1
-        elif self.color_counter % cycle < 5*128:
+        elif self.color_counter % cycle < 5 * 128:
             self.blue += 1
-        elif self.color_counter % cycle < 6*128:
+        elif self.color_counter % cycle < 6 * 128:
             self.blue -= 1
         self.color_counter += 1
         return f"\033[38;2;{128+self.red};{128+self.green};{128+self.blue}m{char}\033[0m"
@@ -90,7 +86,7 @@ class SurfaceWalker:
                             nx = (nx + dx) % self.len_x
                         if self.grid[ny][nx] == "#":
                             break
-                        elif self.grid[ny][nx] == ".":
+                        if self.grid[ny][nx] == ".":
                             self.coordinates = ny, nx
                     else:
                         """
@@ -102,45 +98,43 @@ class SurfaceWalker:
                         if self.side[y][x] == self.side[ny][nx]:
                             if self.grid[ny][nx] == "#":
                                 break
-                            else:
-                                self.coordinates = ny, nx
-                                self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
+                            self.coordinates = ny, nx
+                            self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
                         else:
                             N = self.N
                             sy = y % N
                             sx = x % N
                             if self.side[y][x] == 1:
-                                ny = [sy, N, 3*N-sy-1, 3*N+sx][self.facing]
-                                nx = [2*N, N+sx, 0, 0][self.facing]
+                                ny = [sy, N, 3 * N - sy - 1, 3 * N + sx][self.facing]
+                                nx = [2 * N, N + sx, 0, 0][self.facing]
                                 new_facing = [0, 1, 0, 0][self.facing]
                             elif self.side[y][x] == 2:
-                                ny = [3*N-sy-1, N+sx, sy, 4*N-1][self.facing]
-                                nx = [2*N-1, 2*N-1, 2*N-1, sx][self.facing]
+                                ny = [3 * N - sy - 1, N + sx, sy, 4 * N - 1][self.facing]
+                                nx = [2 * N - 1, 2 * N - 1, 2 * N - 1, sx][self.facing]
                                 new_facing = [2, 2, 2, 3][self.facing]
                             elif self.side[y][x] == 3:
-                                ny = [N-1, 2*N, 2*N, N-1][self.facing]
-                                nx = [2*N+sy, N+sx, sy, N+sx][self.facing]
+                                ny = [N - 1, 2 * N, 2 * N, N - 1][self.facing]
+                                nx = [2 * N + sy, N + sx, sy, N + sx][self.facing]
                                 new_facing = [3, 1, 1, 3][self.facing]
                             elif self.side[y][x] == 4:
-                                ny = [2*N+sy, 3*N, N-sy-1, N+sx][self.facing]
+                                ny = [2 * N + sy, 3 * N, N - sy - 1, N + sx][self.facing]
                                 nx = [N, sx, N, N][self.facing]
                                 new_facing = [0, 1, 0, 0][self.facing]
                             elif self.side[y][x] == 5:
-                                ny = [N-sy-1, 3*N+sx, 2*N+sy, 2*N-1][self.facing]
-                                nx = [3*N-1, N-1, N-1, N+sx][self.facing]
+                                ny = [N - sy - 1, 3 * N + sx, 2 * N + sy, 2 * N - 1][self.facing]
+                                nx = [3 * N - 1, N - 1, N - 1, N + sx][self.facing]
                                 new_facing = [2, 2, 2, 3][self.facing]
                             elif self.side[y][x] == 6:
-                                ny = [3*N-1, 0, 0, 3*N-1][self.facing]
-                                nx = [N+sy, 2*N+sx, N+sy, sx][self.facing]
+                                ny = [3 * N - 1, 0, 0, 3 * N - 1][self.facing]
+                                nx = [N + sy, 2 * N + sx, N + sy, sx][self.facing]
                                 new_facing = [3, 1, 1, 3][self.facing]
                             else:
                                 raise ValueError(f"Invalid side {self.side[y][x]}")
                             if self.grid[ny][nx] == "#":
                                 break
-                            else:
-                                self.coordinates = ny, nx
-                                self.facing = new_facing
-                                self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
+                            self.coordinates = ny, nx
+                            self.facing = new_facing
+                            self.grid[ny][nx] = self.color_character(self.symbol_table[self.facing])
 
             elif action == "R":
                 self.facing = (self.facing + 1) % 4
@@ -148,7 +142,7 @@ class SurfaceWalker:
                 self.facing = (self.facing - 1) % 4
             else:
                 raise ValueError("Invalid action")
-        
+
     def print_grid(self):
         for row in self.grid:
             for c in row:

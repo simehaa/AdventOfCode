@@ -9,15 +9,9 @@ with open("test.txt") as f:
         e1e = int(elf1[1])
         e2s = int(elf2[0])
         e2e = int(elf2[1])
-        if (
-            e2s >= e1s and e2s <= e1e 
-        ) or (
-            e1s >= e2s and e1s <= e2e 
-        ):
+        if (e2s >= e1s and e2s <= e1e) or (e1s >= e2s and e1s <= e2e):
             overlap += 1
-            if e1s >= e2s and e1e <= e2e:
-                fully_contained += 1
-            elif e2s >= e1s and e2e <= e1e:
+            if e1s >= e2s and e1e <= e2e or e2s >= e1s and e2e <= e1e:
                 fully_contained += 1
 
 

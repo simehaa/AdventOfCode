@@ -20,15 +20,17 @@ class ParabolicReflector:
                     ny += direction[0]
                     nx += direction[1]
                     if (
-                        ny >= 0 and ny < self.height
-                        and nx >= 0 and nx < self.width
+                        ny >= 0
+                        and ny < self.height
+                        and nx >= 0
+                        and nx < self.width
                         and self.disc[y][x] == "O"
                         and self.disc[ny][nx] == "."
                     ):
-                            self.disc[ny][nx] = "O"
-                            self.disc[y][x] = "."
-                            moves = True
-    
+                        self.disc[ny][nx] = "O"
+                        self.disc[y][x] = "."
+                        moves = True
+
     def perform_full_tilt_cycle(self) -> None:
         self.tilt_in_one_direction(direction=(-1, 0))
         self.tilt_in_one_direction(direction=(0, -1))
@@ -40,7 +42,7 @@ class ParabolicReflector:
         for y, row in enumerate(self.disc):
             load += (self.height - y) * sum([c == "O" for c in row])
         return load
-    
+
     def find_load_after_billion_tilt_cycles(self, look_back=150, warm_up=300):
         loads = []
         repeated_loads = []
@@ -54,9 +56,8 @@ class ParabolicReflector:
             signature = tuple(loads[-look_back:])
             if signature in repeated_signatures:
                 break
-            else:
-                repeated_signatures.append(signature)
-                repeated_loads.append(loads[-1])
+            repeated_signatures.append(signature)
+            repeated_loads.append(loads[-1])
         repeat_after = len(repeated_signatures)
         remaining = (1_000_000_000 - warm_up - 1) % repeat_after
 

@@ -22,26 +22,25 @@ def scan_cave(filename, floor=False):
                         grid[x][y0] = "#"
     if floor:
         for i in range(width):
-            grid[lowest_rock+2][i] = "#"
+            grid[lowest_rock + 2][i] = "#"
 
     return grid
 
 
 def move(grid, x, y):
-        if x == len(grid) - 1:
-            return grid, "abyss"
-        elif grid[x+1][y] == ".":
-            return move(grid, x+1, y)
-        elif grid[x+1][y-1] == ".":
-            return move(grid, x+1, y-1)
-        elif grid[x+1][y+1] == ".":
-            return move(grid, x+1, y+1)
-        elif x == 0 and y == 500:
-            grid[x][y] = "O"
-            return grid, "filled"
-        else:
-            grid[x][y] = "O"
-            return grid, "rockslide"
+    if x == len(grid) - 1:
+        return grid, "abyss"
+    if grid[x + 1][y] == ".":
+        return move(grid, x + 1, y)
+    if grid[x + 1][y - 1] == ".":
+        return move(grid, x + 1, y - 1)
+    if grid[x + 1][y + 1] == ".":
+        return move(grid, x + 1, y + 1)
+    if x == 0 and y == 500:
+        grid[x][y] = "O"
+        return grid, "filled"
+    grid[x][y] = "O"
+    return grid, "rockslide"
 
 
 def solve(filename, floor=False):

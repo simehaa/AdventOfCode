@@ -5,14 +5,14 @@ def HASMAP(step, current_value=0):
         current_value %= 256
     return current_value
 
-    
+
 def get_focus_power(sequence):
     focus_power = 0
     boxes = {}
     for i, step in enumerate(sequence):
         if "=" in step:
             label = step[:-2]
-            box = HASMAP(label) 
+            box = HASMAP(label)
             value = int(step[-1])
             if box in boxes:
                 boxes[box][label] = value
@@ -28,10 +28,10 @@ def get_focus_power(sequence):
     for box, lenses in boxes.items():
         for i, focal_length in enumerate(lenses.values()):
             focus_power += (box + 1) * (i + 1) * focal_length
-            
+
     return focus_power
 
 
-sequence = open("test.txt").readline().rstrip().split(",") 
+sequence = open("test.txt").readline().rstrip().split(",")
 print("Part 1:", sum([HASMAP(s) for s in sequence]))
 print("Part 2:", get_focus_power(sequence))

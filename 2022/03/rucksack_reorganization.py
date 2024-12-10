@@ -5,7 +5,7 @@ priority = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 score1 = 0
 with open("test.txt") as f:
     for i, line in enumerate(f):
-        half_length = (len(line) - 1) // 2 # remove newline, int division
+        half_length = (len(line) - 1) // 2  # remove newline, int division
         compartment1 = line[:half_length]
         compartment2 = line[half_length:-1]
         # print(f"Rucksack {i},", compartment1, compartment2, end=", ")

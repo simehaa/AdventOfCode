@@ -22,7 +22,7 @@ def solve(lines, part=1):
             elif turn == "R":
                 current_position = right
         return steps
-    elif part == 2:
+    if part == 2:
         left_right = lines[0].strip()
         nodes = {}
         paths = []
@@ -45,7 +45,7 @@ def solve(lines, part=1):
                     paths[i] = left
                 elif turn == "R":
                     paths[i] = right
-                
+
                 if paths[i].endswith("Z"):
                     # print(paths[i], "ended after", steps)
                     times.append(steps)

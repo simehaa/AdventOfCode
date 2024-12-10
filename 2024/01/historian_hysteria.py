@@ -15,5 +15,6 @@ def solve(filename):
     print(s)
     print(p)
 
+
 if __name__ == "__main__":
     solve("test.txt")

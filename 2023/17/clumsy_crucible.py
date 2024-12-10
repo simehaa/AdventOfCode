@@ -1,14 +1,11 @@
-from heapq import heappush, heappop
+from heapq import heappop, heappush
 
 
 def djikstra(grid, least=1, most=3):
     height = len(grid)
     width = len(grid[0])
-    goal = (height-1, width-1)
-    priority_queue = [
-        (0, 0, 0, 0, 1, 0),
-        (0, 0, 0, 1, 0, 0),
-    ] # (heat_loss, y, x, dy, dx, steps)
+    goal = (height - 1, width - 1)
+    priority_queue = [(0, 0, 0, 0, 1, 0), (0, 0, 0, 1, 0, 0)]  # (heat_loss, y, x, dy, dx, steps)
     visited = set()
     while priority_queue:
         # Check the highest priority path (by lowest heat loss)
@@ -24,28 +21,31 @@ def djikstra(grid, least=1, most=3):
         visited.add((y, x, dy, dx, steps))
 
         # continue in same direction
-        if (
-            steps < most
-            and 0 <= y+dy < height 
-            and 0 <= x+dx < width
-        ):
+        if steps < most and 0 <= y + dy < height and 0 <= x + dx < width:
             heappush(
                 priority_queue,
-                (heat_loss + grid[y+dy][x+dx], y+dy, x+dx, dy, dx, steps+1)
+                (heat_loss + grid[y + dy][x + dx], y + dy, x + dx, dy, dx, steps + 1),
             )
 
         # turn right and left
         if steps >= least:
             for new_dy, new_dx in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
                 if (
-                    (new_dy, new_dx) != (dy, dx) # same direction already added to queue
-                    and (new_dy, new_dx) != (-dy, -dx) # not allowed to go back
-                    and 0 <= y+new_dy < height
-                    and 0 <= x+new_dx < width
+                    (new_dy, new_dx) != (dy, dx)  # same direction already added to queue
+                    and (new_dy, new_dx) != (-dy, -dx)  # not allowed to go back
+                    and 0 <= y + new_dy < height
+                    and 0 <= x + new_dx < width
                 ):
                     heappush(
                         priority_queue,
-                        (heat_loss + grid[y+new_dy][x+new_dx], y+new_dy, x+new_dx, new_dy, new_dx, 1)
+                        (
+                            heat_loss + grid[y + new_dy][x + new_dx],
+                            y + new_dy,
+                            x + new_dx,
+                            new_dy,
+                            new_dx,
+                            1,
+                        ),
                     )
 
 

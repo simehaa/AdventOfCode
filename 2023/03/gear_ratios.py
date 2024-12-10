@@ -15,10 +15,10 @@ def solve(schematic):
             start = match.start()
             end = match.end()
             adjacent_symbol = False
-            for x in range(max(0, i-1), min(height, i+2)):
-                for y in range(max(0, start-1), min(width, end+1)):
+            for x in range(max(0, i - 1), min(height, i + 2)):
+                for y in range(max(0, start - 1), min(width, end + 1)):
                     if schematic[x][y] != "." and not schematic[x][y].isdigit():
-                        adjacent_symbol = True        
+                        adjacent_symbol = True
             if adjacent_symbol:
                 sum_of_part_numbers += int(number)
 
@@ -27,14 +27,14 @@ def solve(schematic):
             start = match.start()
             end = match.end()
             matches = []
-            for x in range(max(0, i-1), min(height, i+2)):
+            for x in range(max(0, i - 1), min(height, i + 2)):
                 for num in num_pattern.finditer(schematic[x][:]):
                     for pos in range(num.start(), num.end()):
-                        if pos >= start-1 and pos <= start+1:
+                        if pos >= start - 1 and pos <= start + 1:
                             matches.append(int(num.group()))
                             break
             if len(matches) == 2:
-                sum_of_gear_ratios += matches[0]*matches[1]
+                sum_of_gear_ratios += matches[0] * matches[1]
     return sum_of_part_numbers, sum_of_gear_ratios
 
 

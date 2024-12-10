@@ -2,13 +2,11 @@ def get_elevation(letter):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
     if letter in alphabet:
         return alphabet.index(letter)
-    else:
-        if letter == "S":
-            return get_elevation("a")
-        elif letter == "E":
-            return get_elevation("z")
-        else:
-            raise ValueError(f"Invalid letter: {letter}")
+    if letter == "S":
+        return get_elevation("a")
+    if letter == "E":
+        return get_elevation("z")
+    raise ValueError(f"Invalid letter: {letter}")
 
 
 def find_shortest_path(grid, start, end_letter, ascend=True):
@@ -28,36 +26,34 @@ def find_shortest_path(grid, start, end_letter, ascend=True):
                 dj = sj + direction[1]
 
                 # Check if at boundary
-                if dj < 0 or dj >= width or di < 0 or di >= height:
-                    continue
-
-                # We don't want to go back to anywhere on the current path to avoid infinite loops
-                elif [di, dj] in path:
-                    continue
-
-                # Check if too steep
-                elif ascend and get_elevation(grid[di][dj]) - 1 > get_elevation(grid[si][sj]):
-                    continue
-
-                elif not ascend and get_elevation(grid[si][sj]) - 1 > get_elevation(grid[di][dj]):
+                if (
+                    dj < 0
+                    or dj >= width
+                    or di < 0
+                    or di >= height
+                    or [di, dj] in path
+                    or ascend
+                    and get_elevation(grid[di][dj]) - 1 > get_elevation(grid[si][sj])
+                    or not ascend
+                    and get_elevation(grid[si][sj]) - 1 > get_elevation(grid[di][dj])
+                ):
                     continue
 
                 # Check if End is reached
-                elif grid[di][dj] == end_letter:
+                if grid[di][dj] == end_letter:
                     end_reached = True
                     shortest_path = path + [[di, dj]]
                     break
 
                 # Add as a potential path
+                # Check if this location is already reached by (1) a previous path or (2) one of the new paths
+                for other_path in paths + new_paths:
+                    if [di, dj] in other_path:
+                        break
                 else:
-                    # Check if this location is already reached by (1) a previous path or (2) one of the new paths
-                    for other_path in paths + new_paths:
-                        if [di, dj] in other_path:
-                            break
-                    else:
-                        new_paths.append(path + [[di, dj]])
+                    new_paths.append(path + [[di, dj]])
             else:
-                continue    
+                continue
             break
 
         paths = new_paths

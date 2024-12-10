@@ -26,16 +26,16 @@ def solve(filename, replace=2):
                 idx.append((y, x))
     lengths = 0
     for i in range(len(idx)):
-        for j in range(i+1, len(idx)):
+        for j in range(i + 1, len(idx)):
             y0, x0 = idx[i]
             y1, x1 = idx[j]
-            distance = abs(y1-y0)+abs(x1-x0)
+            distance = abs(y1 - y0) + abs(x1 - x0)
             for y in rows_without_galaxies:
                 if (y > y0 and y < y1) or (y > y1 and y < y0):
-                    distance += replace-1
+                    distance += replace - 1
             for x in columns_without_galaxies:
                 if (x > x0 and x < x1) or (x > x1 and x < x0):
-                    distance += replace-1
+                    distance += replace - 1
             lengths += distance
     return lengths
 

@@ -22,12 +22,12 @@ def solve(filename):
         safe_reports += safe_report
         if not safe_report:
             for i in range(len(report)):
-                reduced_report = report[:i] + report[i+1:]
+                reduced_report = report[:i] + report[i + 1 :]
                 if check_safety(reduced_report):
                     dampened += 1
                     break
     print(safe_reports)
-    print(dampened+safe_reports)
+    print(dampened + safe_reports)
 
 
 solve("test.txt")

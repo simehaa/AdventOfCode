@@ -1,6 +1,5 @@
 import re
 
-
 directories = {}
 with open("test.txt") as f:
     path = []

@@ -53,7 +53,7 @@ for line in instruction_lines:
 
 
 # Part 1 solution (top crate from each position)
-print("Part 1:", "".join([storage1[p][-1] for p in storage1.keys()]))
+print("Part 1:", "".join([storage1[p][-1] for p in storage1]))
 
 # Part 2 solution (top crate from each position)
-print("Part 2:", "".join([storage2[p][-1] for p in storage2.keys()]))
+print("Part 2:", "".join([storage2[p][-1] for p in storage2]))

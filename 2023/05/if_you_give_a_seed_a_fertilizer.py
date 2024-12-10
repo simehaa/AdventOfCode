@@ -9,8 +9,8 @@ def read_input(filename):
             continue
         elif current_mapping and line != "\n":
             dest, source, range_len = [int(i) for i in line.split()]
-            source_min_max = (source, source+range_len)
-            dest_min_max = (dest, dest+range_len)
+            source_min_max = (source, source + range_len)
+            dest_min_max = (dest, dest + range_len)
             if current_mapping not in map_ranges:
                 map_ranges[current_mapping] = {"source": [source_min_max], "dest": [dest_min_max]}
             else:
@@ -46,6 +46,6 @@ print("Part 1:", min([get_location(seed, map_ranges) for seed in seeds]))
 for location in range(5_000_000):
     seed = get_seed(location)
     for start, stop in zip(seeds[::2], seeds[1::2]):
-        if seed >= start and seed < start+stop:
+        if seed >= start and seed < start + stop:
             print("Part 2:", location)
             exit()

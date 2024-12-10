@@ -53,9 +53,10 @@ def solve(filename):
     # Attempt to place obstacles on all path coordinates from part 1 (except start)
     path.remove((y, x))
     loops = 0
-    for (oy, ox) in path:
-        loops += not bool(simulate(y, x, d, oy, ox)) # Whenever we hit loop it returns empty set
+    for oy, ox in path:
+        loops += not bool(simulate(y, x, d, oy, ox))  # Whenever we hit loop it returns empty set
     print(loops)
+
 
 solve("test.txt")
 solve("input.txt")

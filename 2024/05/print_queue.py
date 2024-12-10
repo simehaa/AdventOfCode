@@ -20,7 +20,7 @@ def solve(filename):
 
     def middle_number(p, fix=False):
         for i in range(len(p)):
-            if p[i] not in rules.keys():
+            if p[i] not in rules:
                 continue
             for j in range(i):
                 if p[j] in rules[p[i]]:
@@ -37,6 +37,7 @@ def solve(filename):
         if m == 0:
             s[1] += middle_number(p, fix=True)
     print(s)
+
 
 solve("test.txt")
 solve("input.txt")
