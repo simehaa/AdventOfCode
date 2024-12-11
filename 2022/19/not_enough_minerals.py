@@ -1,114 +1,99 @@
-import numpy as np
+from math import ceil
 
 
-def read_input(filename):
+def read_blueprints(filename):
     blueprints = []
     with open(filename) as f:
         for line in f.readlines():
             words = line.split()
-            blueprint = np.zeros((4, 4), dtype=np.int64)
-            blueprint[0, 0] = int(words[6])
-            blueprint[1, 0] = int(words[12])
-            blueprint[2, 0] = int(words[18])
-            blueprint[2, 1] = int(words[21])
-            blueprint[3, 0] = int(words[27])
-            blueprint[3, 2] = int(words[30])
-            blueprints.append(blueprint)
+            blueprints.append(
+                [
+                    [
+                        [int(words[6]), 0, 0, 0],
+                        [int(words[12]), 0, 0, 0],
+                        [int(words[18]), int(words[21]), 0, 0],
+                        [int(words[27]), 0, int(words[30]), 0],
+                    ],
+                    [
+                        max(int(words[6]), int(words[12]), int(words[18]), int(words[27])),
+                        int(words[21]),
+                        int(words[30]),
+                    ],
+                ]
+            )
     return blueprints
 
 
-def wait_minutes(blueprint, robots, minerals, build):
-    wait = int(np.ceil((blueprint[build] - minerals)[robots != 0] / robots[robots != 0]).max()) + 1
-    return max(wait, 1)
+def dfs(blueprint, max_bots, inv, bots, minutes, cache):
+    if minutes == 0:
+        return inv[3]  # Return the number of geodes at the end
 
+    key = (*inv, *bots, minutes)
+    if key in cache:
+        return cache[key]
 
-def find_maximum_geodes(blueprint, total_minutes=24):
-    """
-    Blueprint looks like this
-    [ 4   0   0   0] (cost of building an ore robot)
-    [ 2   0   0   0] (cost of building a clay robot)
-    [ 3  14   0   0] (cost of building an obsidian robot)
-    [ 2   0   7   0] (cost of building an geode robot)
-    ore clay obs geo
+    # Action 1: Do nothing for the remaining time
+    geodes = inv[3] + bots[3] * minutes
 
-    Optimizations:
-    1. Never buy more of a robot type than the highest cost of its resource
-    2. The last robot in the buy order is a geode robot
-    3. If a build order's ideal scenario doesn't beat the current max_geodes,
-        then don't continue that build order. With t minutes left:
-        a) current number of geodes
-        b) t * geode robots
-        c) t*(t+1)/2 => (0, 1, 3, 6, 10, ...)
-    """
-    max_ore_robots = blueprint[:, 0].max()
-    max_clay_robots = blueprint[:, 1].max() - 1
-    max_obsidian_robots = blueprint[:, 2].max() - 1
-    max_geodes = 0
-    build_orders = [[0], [1]]
-    # build_orders = [[1, 1, 1, 2, 1, 2, 3, 3]]
-    for build_order in build_orders:
-        # Simulate build order
-        robots = np.array([1, 0, 0, 0], dtype=np.int32)
-        minerals = np.array([0, 0, 0, 0], dtype=np.int32)
-        minute = 0
-        for build in build_order:
-            wait = wait_minutes(blueprint, robots, minerals, build)
-            minute += wait
-            if minute < total_minutes:
-                minerals += wait * robots - blueprint[build]
-                robots[build] += 1
-                # print("\nminute:", minute)
-                # print("robots:", robots)
-                # print("minerals:", minerals)
-                # print("build:", build)
-            else:
-                break
-        if minute >= total_minutes:
+    # Try to build 0=ore, 1=clay, 2=obsidian, 3=geodes
+    for i, cost in enumerate(blueprint):
+        # Prune: Only applicable for ore, clay, obsidian
+        # We never need to produce more than max_buys[i] of these
+        if i < 3 and bots[i] >= max_bots[i]:
             continue
 
-        # Now check if we want to continue branching on this build_order
-        time_left = total_minutes - minute
-        minerals += time_left * robots
-        ideal_number_of_geodes = minerals[-1]
-        ideal_number_of_geodes += time_left * robots[-1]
-        ideal_number_of_geodes += int(time_left * (time_left + 1) / 2)
-        if ideal_number_of_geodes < max_geodes:
-            continue
+        # To build robot i, check the wait time needed
+        wait = 0
+        for need, have, bot_count in zip(cost, inv, bots):
+            if need > 0:
+                # impossible to build this bot,
+                # because it requires a bot we don't have
+                if bot_count == 0:
+                    break
+                wait = max(wait, ceil((need - have) / bot_count))
+        else:
+            remaining = minutes - wait - 1
+            if remaining <= 0:
+                continue
 
-        max_geodes = max(minerals[-1], max_geodes)
+            # Build the bot
+            new_bots = bots[:]
+            new_bots[i] += 1
 
-        if (
-            robots[0] < max_ore_robots
-            and minute + wait_minutes(blueprint, robots, minerals, 0) < total_minutes
-        ):
-            build_orders.append(build_order + [0])
+            # Pay the price
+            new_inv = [x + y * (wait + 1) for x, y in zip(inv, bots)]
+            for k, c in enumerate(cost):
+                new_inv[k] -= c
 
-        if (
-            robots[1] < max_clay_robots
-            and minute + wait_minutes(blueprint, robots, minerals, 1) < total_minutes
-        ):
-            build_orders.append(build_order + [1])
+            # Prune 2:
+            for k in range(3):
+                # This is if we produce a bot every minute remaining (except last)
+                # We don't need to keep more than that (except for geodes)
+                # Thus increasing the chance of cache hits
+                max_resources = max_bots[k] * remaining - bots[k] * (remaining - 1)
+                new_inv[k] = min(new_inv[k], max_resources)
 
-        if (
-            robots[1] > 0
-            and robots[2] < max_obsidian_robots
-            and minute + wait_minutes(blueprint, robots, minerals, 2) < total_minutes
-        ):
-            build_orders.append(build_order + [2])
+            geodes = max(geodes, dfs(blueprint, max_bots, new_inv, new_bots, remaining, cache))
 
-        if robots[2] > 0 and minute + wait_minutes(blueprint, robots, minerals, 3) < total_minutes:
-            build_orders.append(build_order + [3])
-
-    return max_geodes
+    cache[key] = geodes
+    return geodes
 
 
 if __name__ == "__main__":
-    blueprints = read_input("input.txt")
-    quality_level_sum = 0
-    first_three_product = 1
+    blueprints = read_blueprints("input.txt")
+    q = 0
     for i, bp in enumerate(blueprints):
-        # quality_level_sum += (i+1)*find_maximum_geodes(bp, 24)
-        if i < 3 and i < len(blueprints):
-            first_three_product *= find_maximum_geodes(bp, 32)
-    # print("Part 1:", quality_level_sum)
-    print("Part 2:", first_three_product)
+        bp, mb = bp
+        g = dfs(bp, mb, [0, 0, 0, 0], [1, 0, 0, 0], 24, {})
+        q += (i + 1) * g
+    print("Part 1:", q)
+
+    t = 1
+    for i, bp in enumerate(read_blueprints("input.txt")):
+        if i == 3:
+            break
+        bp, mb = bp
+        g = dfs(bp, mb, [0, 0, 0, 0], [1, 0, 0, 0], 32, {})
+        print("Blueprint", i + 1, "produces", g, "geodes")
+        t *= g
+    print("Part 2:", t)
