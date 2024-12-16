@@ -20,7 +20,7 @@ def GPS(grid, box_char):
     for y, row in enumerate(grid):
         for x, char in enumerate(row):
             if char == box_char:
-                total += 100*y + x
+                total += 100 * y + x
     return total
 
 
@@ -71,7 +71,7 @@ def part2(grid, moves):
             continue
         # Ahead IS a box
         if grid[ny][nx] == "]":
-            nx -= 1 # Only store the "[" coordinates
+            nx -= 1  # Only store the "[" coordinates
         # For all coordinates in boxes_to_move
         # if any wall, break
         # if any boxes, add to boxes_to_move
@@ -81,36 +81,36 @@ def part2(grid, moves):
             if dy == 0:
                 ny = y
                 nx = x + dx
-                if dx == 1: # right: jump two locations
+                if dx == 1:  # right: jump two locations
                     nx = x + 2 * dx
                 if grid[ny][nx] == "#":
                     break
                 if grid[ny][nx] == "[":
                     boxes_to_move.append((ny, nx))
                 if grid[ny][nx] == "]":
-                    boxes_to_move.append((ny, nx-1))
+                    boxes_to_move.append((ny, nx - 1))
             # Vertical movement: need to check two locations
             else:
                 ny, nx = y + dy, x + dx
                 left = grid[ny][nx]
-                right = grid[ny][nx+1]
+                right = grid[ny][nx + 1]
                 if left == "#" or right == "#":
                     break
-                if left == "[": # implies right == "]"
+                if left == "[":  # implies right == "]"
                     boxes_to_move.append((ny, nx))
                 if right == "[":
-                    boxes_to_move.append((ny, nx+1))
+                    boxes_to_move.append((ny, nx + 1))
                 if left == "]":
-                    boxes_to_move.append((ny, nx-1))
+                    boxes_to_move.append((ny, nx - 1))
         else:
             # Moving phase
             for y, x in boxes_to_move:
                 grid[y][x] = "."
-                grid[y][x+1] = "."
+                grid[y][x + 1] = "."
             for y, x in boxes_to_move:
                 ny, nx = y + dy, x + dx
                 grid[ny][nx] = "["
-                grid[ny][nx+1] = "]"
+                grid[ny][nx + 1] = "]"
             ry, rx = robot
             grid[ry][rx] = "."
             ry, rx = ry + dy, rx + dx
