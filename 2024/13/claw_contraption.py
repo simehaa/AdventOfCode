@@ -15,9 +15,23 @@ def solve(ax, ay, bx, by, px, py):
     determinant = ax * by - ay * bx
     if determinant == 0:
         # A and B vectors are parallel:
-        # either no solution or if solution, then go for just B
-        if px % bx and py % by:
-            return px / bx
+        # If either are not parallel with P, no solution:
+        if px * by != py * bx:
+            return 0
+        # With positive integers requirement
+        # There can be a finite set of solutions or no solution
+        # We search forward for any solution starting with
+        a = 0
+        while True:
+            b = (px - a * ax) // bx
+            # Check if this is an integer solution
+            if (px - a * ax) % bx == 0:
+                return 3 * a + b
+            # If we overstepped, and still haven't found solution,
+            # then there is no solution
+            if b < 0:
+                break
+            a += 1
         return 0
     # Not linearly dependent: exactly one solution
     a = (px * by - py * bx) / determinant
@@ -30,7 +44,7 @@ def solve(ax, ay, bx, by, px, py):
 
 
 if __name__ == "__main__":
-    machines = read("test.txt")
+    machines = read("input.txt")
     part1, part2 = 0, 0
     for machine in machines.values():
         part1 += solve(*machine)
