@@ -69,7 +69,7 @@ def solve(slabs):
         for pos in slab:
             c_all_positions.remove(pos)
         _, _, chain = stabilize(c_slabs, c_all_positions)
-        num_safely += not(len(chain))
+        num_safely += not (len(chain))
         sum_chains += len(chain)
 
     print("Part 1:", num_safely)

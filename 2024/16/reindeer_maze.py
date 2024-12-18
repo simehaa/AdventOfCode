@@ -31,7 +31,7 @@ def djikstra(filename):
         # Limit visited coordinates with same direction
         key = (y, x, d)
         if key in visited:
-            if visited[key] > 10: # 10 was actually needed for input.txt
+            if visited[key] > 10:  # 10 was actually needed for input.txt
                 continue
             visited[key] += 1
         else:
@@ -47,7 +47,7 @@ def djikstra(filename):
             else:
                 new_score = score + 1000
                 new_path = path
-            if grid[y+dy][x+dx] != "#":
+            if grid[y + dy][x + dx] != "#":
                 heappush(queue, (new_score, nd, new_path))
 
     return best_score, len(best_seats)
