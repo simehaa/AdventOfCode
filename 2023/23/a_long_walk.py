@@ -1,4 +1,10 @@
-def get_nodes(grid, part1=True):
+def read(filename):
+    with open(filename) as f:
+        grid = [list(l) for l in f.read().splitlines()]
+    return grid
+
+
+def get_edge_cost_matrix(grid, part=1):
     h, w = len(grid), len(grid[0])
     start = (0, 1)
     end = (h - 1, w - 2)
@@ -20,9 +26,9 @@ def get_nodes(grid, part1=True):
         paths = []
         for d, (dy, dx) in enumerate(dirs):
             ny, nx = y + dy, x + dx
-            if not (0<=ny<h and 0<=nx<w) or grid[ny][nx] == "#":
+            if not (0 <= ny < h and 0 <= nx < w) or grid[ny][nx] == "#":
                 continue
-            if part1 and grid[ny][nx] in arrows and grid[ny][nx] != arrows[d]:
+            if part == 1 and grid[ny][nx] in arrows and grid[ny][nx] != arrows[d]:
                 continue
             paths.append([(ny, nx, d)])
         # For each path branch, keep exploring until we reach another node
@@ -37,44 +43,26 @@ def get_nodes(grid, part1=True):
                 for nd in [0, 1, 3]:
                     nd = (d+nd)%4
                     dy, dx = dirs[nd]
-                    c = grid[ny+dy][nx+dx]
+                    c = grid[ny + dy][nx + dx]
                     if c == "#":
                         continue
-                    if part1 and c in arrows and c != arrows[nd]:
+                    if part == 1 and c in arrows and c != arrows[nd]:
                         continue
-                    path.append((ny+dy, nx+dx, nd))
+                    path.append((ny + dy, nx + dx, nd))
                     break
     return costs
 
 
 if __name__ == "__main__":
-    with open("input.txt") as f:
-        grid = [list(l) for l in f.read().splitlines()]
-    cost_matrix = get_nodes(grid, part1=False)
-    for row in cost_matrix:
-        print(row)
-    # Using the costs matrix, we start at node 0, and can then jump
-    # from node to node, sometimes we have multiple choices, but
-    # we're never allowed to visit the same node twice, until we
-    # reach the end
-    hikes = []
-    print("Simulating node jump")
-
-    from functools import cache
-    @cache
-    def dfs(nodes, total_cost):
-        print(len(nodes))
-        current = nodes[-1]
-        if current == 1:
-            hikes.append(total_cost)
+    cost_matrix = get_edge_cost_matrix(read("test.txt"), part=2)
+    def dfs(node, cost, visited):
+        global max_cost
+        if node == 1:
+            max_cost = max(max_cost, cost)
             return
-        for other, cost in enumerate(cost_matrix[current]):
-            if cost == 0 or other in nodes:
-                continue
-            dfs((*nodes, other), total_cost + cost)
-        return
-
-    dfs((0,), 0)
-    print(max(hikes))
-
-
+        for next_node, edge_cost in enumerate(cost_matrix[node]):
+            if edge_cost and next_node not in visited:
+                dfs(next_node, cost + edge_cost, visited | {next_node})
+    max_cost = 0
+    dfs(0, 0, {0})
+    print(max_cost)
