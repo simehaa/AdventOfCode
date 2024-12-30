@@ -4,11 +4,11 @@ from functools import cache
 @cache
 def decipher(secret):
     mask = 2**24 - 1
-    secret ^= (secret << 6)
+    secret ^= secret << 6
     secret &= mask
-    secret ^= (secret >> 5)
+    secret ^= secret >> 5
     secret &= mask
-    secret ^= (secret << 11)
+    secret ^= secret << 11
     secret &= mask
     return secret
 

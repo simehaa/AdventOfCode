@@ -23,7 +23,7 @@ def part1(inputs, gates):
                 gates_todo.remove((ans, op))
                 inputs[ans] = eval(f"{inputs[l]} {ops[o]} {inputs[r]}")
                 if ans[0] == "z":
-                    total += inputs[ans]*2**int(ans[1:])
+                    total += inputs[ans] * 2 ** int(ans[1:])
     print("part 1:", total)
 
 
@@ -95,11 +95,11 @@ def find_wrong_wires(gates):
                 carry = k
 
             # Check 2), assuming 4) is correct
-            if and_a in {l, r} and not and_b in {l, r}:
+            if and_a in {l, r} and and_b not in {l, r}:
                 return [and_b, l if and_a == r else r]
 
             # Check 4), assuming 2) is correct
-            if and_b in {l, r} and not and_a in {l, r}:
+            if and_b in {l, r} and and_a not in {l, r}:
                 return [and_a, l if and_b == r else r]
 
 
@@ -110,6 +110,7 @@ def part2(gates):
         gates[a], gates[b] = gates[b], gates[a]
         wires += [a, b]
     print("part 2:", ",".join(sorted(wires)))
+
 
 # Warning:
 # My algorithm is not fully generalized.

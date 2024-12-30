@@ -2,12 +2,7 @@ from functools import cache
 
 
 def numeric_keypad(last_button, next_button):
-    buttons = [
-        ("7", "8", "9"),
-        ("4", "5", "6"),
-        ("1", "2", "3"),
-        (None, "0", "A")
-    ]
+    buttons = [("7", "8", "9"), ("4", "5", "6"), ("1", "2", "3"), (None, "0", "A")]
     sy, sx, ey, ex = 0, 0, 0, 0
     for y, row in enumerate(buttons):
         for x, c in enumerate(row):
@@ -16,8 +11,8 @@ def numeric_keypad(last_button, next_button):
             if c == next_button:
                 ey, ex = y, x
     dy, dx = ey - sy, ex - sx
-    horizontal_arrows = "" if dx == 0 else " ><"[abs(dx)//dx] * abs(dx)
-    vertical_arrows = "" if dy == 0 else " v^"[abs(dy)//dy] * abs(dy)
+    horizontal_arrows = "" if dx == 0 else " ><"[abs(dx) // dx] * abs(dx)
+    vertical_arrows = "" if dy == 0 else " v^"[abs(dy) // dy] * abs(dy)
     if sx == 0 and ey == 3:
         return horizontal_arrows + vertical_arrows + "A"
     if sy == 3 and ex == 0:
@@ -31,10 +26,7 @@ def numeric_keypad(last_button, next_button):
 def directional_keypad(last_button, next_button):
     if last_button == next_button:
         return ["A"]
-    buttons = [
-        (None, "^", "A"),
-        ("<", "v", ">")
-    ]
+    buttons = [(None, "^", "A"), ("<", "v", ">")]
     sy, sx, ey, ex = 0, 0, 0, 0
     for y, row in enumerate(buttons):
         for x, c in enumerate(row):
@@ -72,6 +64,7 @@ for x in buttons:
         seqs = directional_keypad(x, y)
         lengths[(x, y)] = len(seqs[0])
         sequences[(x, y)] = seqs
+
 
 @cache
 def dfs(x, y, depth):

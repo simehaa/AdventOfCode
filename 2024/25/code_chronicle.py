@@ -8,7 +8,7 @@ for scheme in schematics:
     heights = [0] * 5
     for line in lines[1:-1]:
         for i, c in enumerate(line):
-            heights[i] += (c == "#")
+            heights[i] += c == "#"
     if lines[0] == "#####":
         locks.append(heights)
         continue
