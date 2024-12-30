@@ -3,8 +3,8 @@ with open("input.txt") as f:
 
 inputs = {}
 for line in inputs_raw.splitlines():
-    name, value = line.split(": ")
-    inputs[name] = int(value)
+    and_bme, value = line.split(": ")
+    inputs[and_bme] = int(value)
 
 gates = {}
 for line in gates_raw.splitlines():
@@ -28,7 +28,9 @@ def part1(inputs, gates):
 
 
 def find_wrong_wires(gates):
-    # First gate x00 + y00 = z00 and potential carry bit
+    # First gate:
+    # x00 XOR y00 -> z00
+    # x00 AND y00 -> carry
     carry = ""
     for k, v in gates.items():
         l, o, r = v.split()
@@ -38,69 +40,67 @@ def find_wrong_wires(gates):
             if o == "AND":
                 carry = k
 
-    # Ensure logic
-    # x XOR y -> xor_val
-    # x AND y -> and_val
-    # carry XOR xor_val -> z
-    # carry AND xor_val -> na
-    # na OR and_val -> carry (for next bit)
+    # For bits (x01, y01, z01), ..., (x44, y44, z44)
+    # (Finally z45 is simply the carry bit after bit 44)
     for i in range(1, 45):
-        xor_val = ""  # x XOR y
-        and_val = ""  # x AND y
+        xor_a, and_a, xor_b, and_b = "", "", "", ""
         s = f"{i:02d}"
+
+        # Bit-by-bit, ensure logic
+        # 1) x XOR y -> xor_a
+        # 2) x AND y -> and_a
+        # 3) carry XOR xor_a -> xor_b (z)
+        # 4) carry AND xor_a -> and_b
+        # 5) and_b OR and_a -> carry (for next bit)
+
+        # Evaluate 1) and 2)
         for k, v in gates.items():
             l, o, r = v.split()
-            if l == "x" + s or l == "y" + s:
-                if o == "XOR":
-                    xor_val = k
-                if o == "AND":
-                    and_val = k
+            if {l, o, r} == {"x" + s, "XOR", "y" + s}:
+                xor_a = k
+            if {l, o, r} == {"x" + s, "AND", "y" + s}:
+                and_a = k
 
-        # Assuming carry is correct, we can evaluate xor_val and z
+        # Assuming 5) carry for the previous bit is correct
         for k, v in gates.items():
             l, o, r = v.split()
 
-            # Check whether xor_val is correct, it should only be involved
-            # with operations with the carry register:
-            if carry in {l, r} and xor_val not in {l, r}:
-                other = l if carry == r else r
-                return [xor_val, other]
+            # Check 1), assuming 5) from previous bit is correct
+            if carry in {l, r} and xor_a not in {l, r}:
+                return [xor_a, l if carry == r else r]
 
-            # Check that writing to the z is correct, the operation
-            # carry XOR xor_val -> z (is expected to write to z)
-            if {xor_val, "XOR", carry} == {l, o, r} and k != "z" + s:
+            # Potential detection of wrong carry (not implemented)
+            # if xor_a is involved in two operations (one XOR and one AND), with
+            # the same register, and this register is not the carry, then carry
+            # is probably wrong.
+
+            # Check 3) that writing to the z is correct, the operation
+            # carry XOR xor_a -> z (is expected to write to z)
+            if {xor_a, "XOR", carry} == {l, o, r} and k != "z" + s:
                 return [k, "z" + s]
 
-        na = ""
-        for k, v in gates.items():
-            l, o, r = v.split()
-            if {xor_val, "AND", carry} == {l, o, r}:
-                na = k
+            # Evaluate 4); Set and_b
+            if {xor_a, "AND", carry} == {l, o, r}:
+                and_b = k
 
-        # If both and_val and na are wrong, we have a problem,
+        # If both and_a and and_b are wrong, we have a problem,
         # but we can easily detect if ONLY ONE of them are wrong
         # because they should only be used in a single OR operation
-        # with each other
+        # with each other, and that will be the carry for the next bit
         for k, v in gates.items():
             l, o, r = v.split()
-            if and_val in {l, r} and not na in {l, r}:
-                other = l if and_val == r else r
-                return [na, other]
-            if na in {l, r} and not and_val in {l, r}:
-                other = l if na == r else r
-                return [and_val, other]
 
-        # Write carry-bit for next iteration, if this is wrong
-        # then we would have had to cross-check with two operations
-        # in the next iteration. We don't do this, we just assume this
-        # operation always writes correctly
-        carry = ""
-        for k, v in gates.items():
-            l, o, r = v.split()
-            if {and_val, "OR", na} == {l, o, r}:
+            # Evaluate 5); Set carry
+            if {and_a, "OR", and_b} == {l, o, r}:
                 carry = k
-                break
-    return None
+
+            # Check 2), assuming 4) is correct
+            if and_a in {l, r} and not and_b in {l, r}:
+                return [and_b, l if and_a == r else r]
+
+            # Check 4), assuming 2) is correct
+            if and_b in {l, r} and not and_a in {l, r}:
+                return [and_a, l if and_b == r else r]
 
 
 def part2(gates):
@@ -111,14 +111,18 @@ def part2(gates):
         wires += [a, b]
     print("part 2:", ",".join(sorted(wires)))
 
-# Warning: not fully generalized
-# There are two cases my algorithm will not pick up on
+# Warning:
+# My algorithm is not fully generalized.
+# There are two cases my algorithm will not pick up on:
+
 # Case 1:
-# if BOTH of these operations writes wrong for the same bit
-# (x XOR y) AND carry -> register_a
-# (x AND y) AND carry -> register_b
+# if BOTH of these operations writes wrong in the same iteration (same bit)
+# (x XOR y) AND carry -> and_b
+# x AND y -> and_a
+
 # Case 2:
-# if register_a OR register_b -> carry (for the next bit)
+# if and_a OR and_b -> carry (for the next bit)
 # writes to the wrong register
+
 part1(inputs, gates)
 part2(gates)
